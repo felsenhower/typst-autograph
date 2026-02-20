@@ -149,16 +149,27 @@
             )    
           }
         ),
-        ..edges.map(
-            edge => {
-              // Note: Currently, the "head" and "tail" arguments of the edge function are incorrectly named.
-              // Therefore, we need to effectively call it as edge(head: tail, tail: head) for it to be correct later.
-              // Since this feels more natural anyway, it's likely that the parameter names are simply a typo.
-              dgl.edge(
-                str(edge.value.tail),
-                str(edge.value.head),
-              )
-            }
+        ..edges.enumerate().map(
+          ((i, edge)) => {
+            // We are doing some hacks with the edge label in order to be able to identify out edges later on
+            // (since they don't have a built-in identifier at the moment).
+            // Since we are using labelfloat: true, the layout is only affected if you have a lot of edges, but
+            // even then, probably not by much.
+            // Later on, we can sort by the label width of each edge and get our canonical edge order back.
+            // I hope we can replace this with something more sound later on.
+            let min-len = 8pt
+            let step = 1pt
+            let dummy-id = min-len + (i * step)
+            // Note: Currently, the "head" and "tail" arguments of the edge function are incorrectly named.
+            // Therefore, we need to effectively call it as edge(head: tail, tail: head) for it to be correct later.
+            // Since this feels more natural anyway, it's likely that the parameter names are simply a typo.
+            dgl.edge(
+              str(edge.value.tail),
+              str(edge.value.head),
+              label: (width: dummy-id, height: 0pt),
+              labelfloat: "true",
+            )
+          }
         )
       )
       assert(not layout.errored)
@@ -182,11 +193,16 @@
           (name, (x - dx, y - dy))
         }
       ).to-dict()
-      let layout-edges = layout.edges
       // diagraph-layout does not guarantee that the input and output order of the edges is identical.
-      // The following code brings layout-edges into the order of edges.
-      // Important edge-case (haha): When multiple identical edges are passed,
-      // we still can't guarantee this, but it's probably fine...
+      // Since we applied a summy label width to each edge before, it *should* suffice to sort by that width
+      // to get our original edge order back.
+      let layout-edges = {
+        layout.edges.sorted(
+          key: edge => edge.label.width
+        )
+      }
+      // Nonetheless, I will still go the extra mile and manually "order" the edges
+      // by the (tail, head) combinations which is only ambiguous if you have multiple identical edges.
       let layout-edges = {
         let layout-edges-old = layout-edges
         let layout-edges-new = ()
@@ -204,7 +220,6 @@
         }
         layout-edges-new
       }
-
       let layout-edges = layout-edges.map(
         edge => {
           let points = edge.points.map(
@@ -224,7 +239,7 @@
         }
       )
       assert(
-        layout.edges.map(
+        layout-edges.map(
           edge => (edge.tail, edge.head)
         ) == edges.map(
           edge => (str(edge.value.tail), str(edge.value.head))
