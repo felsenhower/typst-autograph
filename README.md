@@ -1,5 +1,7 @@
 # autograph
 
+![autograph logo](logo/logo.svg)
+
 A [Typst](https://typst.app/) package for drawing graphs with automatic layout, built on top of [fletcher](https://github.com/Jollywatt/typst-fletcher) and [diagraph-layout](https://github.com/Robotechnic/diagraph-layout).
 
 ## Usage Examples
