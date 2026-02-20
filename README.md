@@ -223,4 +223,5 @@ This is just a workaround for the moment, and when fletcher supports Bézier cur
 - We're currently not supporting edge labels.
 - We're currently not supporting undirected graphs.
 - We're currently unable to set node, edge, and graph attributes. For example, it would be nice to set the drawing direction (`rankdir`) among other things. In some cases, attributes should be set automatically. For example, when we set `node-shape: rect` in the diagram, we should also pass `shape=box` to Graphviz to improve rendering in some edge cases.
+- We're currently applying some default styles to the diagrams to get the ellipse-shaped nodes and arrow-shaped edges. It's not hard to turn those off but it might be convenient to turn all of them off with a single argument.
 - Missing something? Create an [Issue](https://github.com/felsenhower/typst-autograph/issues/new)!
