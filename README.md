@@ -48,7 +48,7 @@ Here, we disabled the `bezier` option because **styling with `bezier: true` has 
 
 ![Styling Example](examples/3-styling-no-bezier.svg)
 
-```
+```typ
 #import "@local/autograph:0.1.0": diagram, node, edge
 #import "@preview/fletcher:0.5.8": shapes
 #diagram(
