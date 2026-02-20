@@ -6,6 +6,7 @@ VERSION := `grep -oP '(?<=version = ")[^"]+' typst.toml`
 install-local:
     mkdir -p ~/.local/share/typst/packages/local/autograph/{{VERSION}}
     cp lib.typ ~/.local/share/typst/packages/local/autograph/{{VERSION}}/
+    cp -r src ~/.local/share/typst/packages/local/autograph/{{VERSION}}/
     cp typst.toml ~/.local/share/typst/packages/local/autograph/{{VERSION}}/
 
 compile-examples:
