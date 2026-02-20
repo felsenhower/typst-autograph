@@ -251,7 +251,6 @@
     // This will probably be improved with fletcher v.0.6.0 and we will remove the bezier option.
     fletcher.diagram(
       ..diagram-args,
-      ..fletcher-elements,
       rendered-nodes,
       for (edge, layout-edge) in edges.zip(layout-edges) {
         assert(str(edge.value.tail) == layout-edge.tail)
@@ -269,6 +268,7 @@
           ..edge.value.args,
         )
       },
+      fletcher-elements,
     )
   } else {
     // When bezier == true, we draw the edges using cetz.draw.bezier.
@@ -276,8 +276,8 @@
     // fletcher will probably feature bezier edges in v.0.6.0 and we will remove the bezier option.
     fletcher.diagram(
       ..diagram-args,
-      ..fletcher-elements,
       rendered-nodes,
+      fletcher-elements,
       render: (grid, fletcher-nodes, fletcher-edges, options) => {
         fletcher.cetz.canvas({
           fletcher.draw-diagram(grid, fletcher-nodes, fletcher-edges, debug: options.debug)
