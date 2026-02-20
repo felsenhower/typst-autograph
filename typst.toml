@@ -6,7 +6,11 @@ authors = ["Ruben Felgenhauer"]
 license = "MIT"
 description = "Automatic graph layout for fletcher"
 repository = "https://github.com/felsenhower/typst-autograph.git"
-categories = ["presentation"]
+categories = ["visualization", "components"]
 keywords = ["graphviz", "graph", "diagram", "fletcher", "dot"]
 compiler = "0.13.0"
-exclude = []
+exclude = [
+  "justfile",
+  "examples/",
+  "logo/"
+]
