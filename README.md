@@ -97,6 +97,7 @@ You can however use CeTZ primitives to style the edges individually. In the exam
 
 Since autograph's diagram works as a drop-in replacement for fletcher's diagram, you can also use fletcher nodes and edges and refer to the autograph nodes via their labels.
 
+![Example with Fletcher](examples/5-mix-with-fletcher.svg)
 
 ```typ
 #import "@preview/autograph:0.1.0" as autograph: diagram
@@ -121,11 +122,9 @@ Since autograph's diagram works as a drop-in replacement for fletcher's diagram,
 )
 ```
 
-![Example with Fletcher](examples/5-mix-with-fletcher.svg)
-
-
 Alternatively, you may want to wrap your autograph elements and your fletcher elements in two separate blocks, like shown below:
 
+![Another Example with Fletcher](examples/6-mix-with-fletcher-alternative.svg)
 
 ```typ
 #import "@preview/autograph:0.1.0" as autograph: diagram
@@ -172,8 +171,6 @@ Alternatively, you may want to wrap your autograph elements and your fletcher el
   }
 )
 ```
-
-![Another Example with Fletcher](examples/6-mix-with-fletcher-alternative.svg)
 
 ## How It Works
 
