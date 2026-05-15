@@ -120,7 +120,11 @@
       ).map(
         e => (str(e.value.name), e)
       ).to-dict()
-      let edges = autograph-elements.filter(e => e.value.class == "autograph-edge")
+      let edges = autograph-elements.filter(
+        e => e.value.class == "autograph-edge"
+      ).enumerate().map(
+        ((i, e)) => ("edge-" + str(i), e)
+      ).to-dict()
       let node-dimensions = nodes.pairs().map(
         ((name, node)) => {
           let measurements = measure(
@@ -149,28 +153,15 @@
             )    
           }
         ),
-        ..edges.enumerate().map(
-          ((i, edge)) => {
-            // We are doing some hacks with the edge label in order to be able to identify out edges later on
-            // (since they don't have a built-in identifier at the moment).
-            // Since we are using labelfloat: true, the layout is only affected if you have a lot of edges, but
-            // even then, probably not by much.
-            // Later on, we can sort by the label width of each edge and get our canonical edge order back.
-            // I hope we can replace this with something more sound later on.
-            let min-len = 8pt
-            let step = 1pt
-            let dummy-id = min-len + (i * step)
-            // Note: Currently, the "head" and "tail" arguments of the edge function are incorrectly named.
-            // Therefore, we need to effectively call it as edge(head: tail, tail: head) for it to be correct later.
-            // Since this feels more natural anyway, it's likely that the parameter names are simply a typo.
+        ..edges.pairs().map(
+          ((name, edge)) => {
             dgl.edge(
               str(edge.value.tail),
               str(edge.value.head),
-              label: (width: dummy-id, height: 0pt),
-              labelfloat: "true",
+              name: name,
             )
           }
-        )
+        ),
       )
       assert(not layout.errored)
       let node-positions = layout.nodes.map(
@@ -193,35 +184,23 @@
           (name, (x - dx, y - dy))
         }
       ).to-dict()
-      // diagraph-layout does not guarantee that the input and output order of the edges is identical.
-      // Since we applied a summy label width to each edge before, it *should* suffice to sort by that width
-      // to get our original edge order back.
-      let layout-edges = {
-        layout.edges.sorted(
-          key: edge => edge.label.width
-        )
-      }
-      // Nonetheless, I will still go the extra mile and manually "order" the edges
-      // by the (tail, head) combinations which is only ambiguous if you have multiple identical edges.
-      let layout-edges = {
-        let layout-edges-old = layout-edges
-        let layout-edges-new = ()
-        for edge in edges {
-          let tail = str(edge.value.tail)
-          let head = str(edge.value.head)
-          for (i, layout-edge) in layout-edges-old.enumerate() {
-            if tail == layout-edge.tail and head == layout-edge.head {
-              layout-edges-new.push(
-                layout-edges-old.remove(i)
-              )
-              break
-            }
-          }
+      let layout-edges = layout.edges.map(
+        (edge) => {
+          (edge.name, (
+            tail: edge.tail,
+            head: edge.head,
+            points: edge.points
+          ))
         }
-        layout-edges-new
-      }
-      let layout-edges = layout-edges.map(
-        edge => {
+      ).to-dict()
+      // diagraph-layout does not guarantee that the input and output order of the edges is identical.
+      // We ensure this by explicitly re-ordering the dict.
+      let layout-edges = edges.keys().map(
+        name => (name, layout-edges.at(name))
+      ).to-dict()
+      assert(edges.keys() == layout-edges.keys())
+      let layout-edges = layout-edges.pairs().map(
+        ((name, edge)) => {
           let points = edge.points.map(
             // We are again using the position-offset, just like with the node-positions:
             point => {
@@ -230,21 +209,16 @@
             }
           )
           let segments = bezier-segments(points)
-          (
-            head: edge.head,
-            tail: edge.tail,
-            points: points,
-            segments: segments,
+          (name, 
+            (
+              head: edge.head,
+              tail: edge.tail,
+              points: points,
+              segments: segments,
+            ),
           )
         }
-      )
-      assert(
-        layout-edges.map(
-          edge => (edge.tail, edge.head)
-        ) == edges.map(
-          edge => (str(edge.value.tail), str(edge.value.head))
-        )
-      )
+      ).to-dict()
       let rendered-nodes = {
         for ((name, node), (x, y)) in nodes.pairs().zip(node-positions.values()) {
           fletcher.node(
@@ -267,7 +241,7 @@
     fletcher.diagram(
       ..diagram-args,
       rendered-nodes,
-      for (edge, layout-edge) in edges.zip(layout-edges) {
+      for (edge, layout-edge) in edges.values().zip(layout-edges.values()) {
         assert(str(edge.value.tail) == layout-edge.tail)
         assert(str(edge.value.head) == layout-edge.head)
         let segments = replace-bezier-bounds(
@@ -296,9 +270,8 @@
       render: (grid, fletcher-nodes, fletcher-edges, options) => {
         fletcher.cetz.canvas({
           fletcher.draw-diagram(grid, fletcher-nodes, fletcher-edges, debug: options.debug)
-          for (edge, layout-edge) in edges.zip(layout-edges) {
+          for (edge, layout-edge) in edges.values().zip(layout-edges.values()) {
             let segments = layout-edge.segments
-            // let points = edge.points
             let calculate-angle(center, other) = {
               let base-unit = 1pt
               let dist = (
