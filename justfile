@@ -7,6 +7,7 @@ bump-version NEW_VERSION:
     @echo Bumping from version {{VERSION}} to {{NEW_VERSION}}
     sed -i "$(printf 's/version = "%s"/version = "%s"/g' "{{VERSION}}" "{{NEW_VERSION}}")" typst.toml
     sed -i "$(printf 's/autograph:%s/autograph:%s/g' "{{VERSION}}" "{{NEW_VERSION}}")" README.md
+    find examples -iname '*.typ' -exec sed -i "$(printf 's/autograph:%s/autograph:%s/g' "{{VERSION}}" "{{NEW_VERSION}}")" "{}" \;
 
 install-local: package
     mkdir -p ~/.local/share/typst/packages/local/autograph/
