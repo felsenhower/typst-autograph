@@ -1,1 +1,1 @@
-#import "./src/impl.typ": diagram, node, edge
+#import "./src/impl.typ": diagram, node, edge, fletcher
