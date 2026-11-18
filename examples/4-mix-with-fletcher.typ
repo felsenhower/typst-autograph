@@ -1,8 +1,7 @@
 #import "template.typ": template
 #show: template
 
-#import "@local/autograph:0.1.2" as autograph: diagram
-#import "@preview/fletcher:0.6.0" as fletcher
+#import "@local/autograph:0.1.2" as autograph: diagram, fletcher
 #diagram(
   engine: "circo",
   node-fill: white,
