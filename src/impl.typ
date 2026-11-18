@@ -1,5 +1,7 @@
-#import "@preview/fletcher:0.5.8" as fletcher
+#import "@preview/fletcher:0.6.0" as fletcher
 #import "diagraph-layout/lib.typ" as dgl
+#import fletcher: cetz
+
 
 #let node(name, ..args) = {
   assert(args.pos().len() <= 1)
@@ -51,18 +53,6 @@
   segments
 }
 
-// Extracts the boundaries of a list of Bézier segments,
-// For example:
-// ((p0, p1, p2, p3), (p3, p4, p5, p6), (p6, p7, p8, p9)) -> (p0, p3, p6, p9)
-#let bezier-boundaries(segments) = {
-  (
-    segments.at(0).at(0),
-    ..segments.map(
-      segment => segment.at(3)
-    )
-  )
-}
-
 // Replaces the start and end points of a list of Bézier segements.
 // For example: 
 // ((p0, p1, p2, p3), (p3, p4, p5, p6)) -> ((new-start, p1, p2, p3), (p3, p4, p5, new-end))
@@ -94,11 +84,10 @@
 
 #let diagram(
   engine: "dot",
-  bezier: false,
   ..args,
 ) = context {
   let default-args = (
-    node-shape: fletcher.shapes.ellipse,
+    node-shape: "ellipse",
     node-stroke: 1pt + black,
     edge-stroke: 1pt,
     mark-scale: 125%,
@@ -208,13 +197,11 @@
               (point.x - dx, point.y - dy)
             }
           )
-          let segments = bezier-segments(points)
           (name, 
             (
               head: edge.head,
               tail: edge.tail,
               points: points,
-              segments: segments,
             ),
           )
         }
@@ -234,89 +221,37 @@
       ((), (), ())
     }
   }
-  if not bezier {
-    // When bezier == false, we draw the edges using fletcher.edge.
-    // Since fletcher currently (as of v0.5.8) doesn't support bezier, this can look a bit choppy.
-    // This will probably be improved with fletcher v.0.6.0 and we will remove the bezier option.
-    fletcher.diagram(
-      ..diagram-args,
-      rendered-nodes,
-      for (edge, layout-edge) in edges.values().zip(layout-edges.values()) {
-        assert(str(edge.value.tail) == layout-edge.tail)
-        assert(str(edge.value.head) == layout-edge.head)
+  fletcher.diagram(
+    ..diagram-args,
+    rendered-nodes,
+    for (edge, layout-edge) in edges.values().zip(layout-edges.values()) {
+      assert(str(edge.value.tail) == layout-edge.tail)
+      assert(str(edge.value.head) == layout-edge.head)
+      // Function for custom edge
+      // https://fletcher-package.github.io/manual/edges.html#custom-edge
+      let path-fun = points => {
+        let segments = bezier-segments(points)
+        // Replace the tail and head with the fletcher nodes.
+        // In most cases, this won't make a noticable difference.
+        // In rare cases, this makes for a nicer layout.
         let segments = replace-bezier-bounds(
-          layout-edge.segments,
+          segments,
           edge.value.tail,
           edge.value.head
         )
-        // Since we're currently unable to draw Bézier curves, we're only keeping the segment boundaries:
-        let points = bezier-boundaries(segments)
-        fletcher.edge(
-          ..points,
-          marks: "-solid",
-          ..edge.value.args,
-        )
-      },
-      fletcher-elements,
-    )
-  } else {
-    // When bezier == true, we draw the edges using cetz.draw.bezier.
-    // This will look fine by default, but will ignore all edge styles that you passed to diagram.
-    // fletcher will probably feature bezier edges in v.0.6.0 and we will remove the bezier option.
-    fletcher.diagram(
-      ..diagram-args,
-      rendered-nodes,
-      fletcher-elements,
-      render: (grid, fletcher-nodes, fletcher-edges, options) => {
-        fletcher.cetz.canvas({
-          fletcher.draw-diagram(grid, fletcher-nodes, fletcher-edges, debug: options.debug)
-          for (edge, layout-edge) in edges.values().zip(layout-edges.values()) {
-            let segments = layout-edge.segments
-            let calculate-angle(center, other) = {
-              let base-unit = 1pt
-              let dist = (
-                (center.at(0) - other.at(0)) / base-unit,
-                (center.at(1) - other.at(1)) / base-unit,
-              )
-              calc.atan2(dist.at(0), dist.at(1))
-            }
-            let tail-node = fletcher.find-node(fletcher-nodes, edge.value.tail)
-            let tail-angle = calculate-angle(segments.at(0).at(0), tail-node.pos.xyz)
-            let head-node = fletcher.find-node(fletcher-nodes, edge.value.head)
-            let head-angle = calculate-angle(segments.at(-1).at(-1), head-node.pos.xyz)
-            fletcher.get-node-anchor(tail-node, tail-angle, start-point => {
-              fletcher.get-node-anchor(head-node, head-angle, end-point => {
-                let segments = replace-bezier-bounds(segments, start-point, end-point)
-                for (i, (a, b, c, d)) in segments.enumerate() {
-                  let default-style = (
-                    stroke: 1pt + black,
-                    mark: (end: ">", fill: black, scale: 1.5)
-                  )
-                  let style = edge.value.args
-                  for (k,v) in default-style.pairs() {
-                    if not style.keys().contains(k) {
-                      style.insert(k, v)
-                    }
-                  }
-                  let style = {
-                    if i != segments.len() - 1 {
-                      let style = style
-                      let _ = style.remove("mark")
-                      style
-                    } else {
-                      style
-                    }
-                  }
-                  fletcher.cetz.draw.bezier(
-                    a, d, b, c,
-                    ..style
-                  )
-                }
-              })
-            })
+        cetz.draw.merge-path({
+          for (start, ctrl-start, ctrl-end, end) in segments {
+            cetz.draw.bezier(start, end, ctrl-start, ctrl-end)
           }
         })
-      },
-    )    
-  }
+      }
+      fletcher.edge(
+        ..layout-edge.points,
+        marks: "-solid",
+        ..edge.value.args,
+        path: path-fun
+      )
+    },
+    fletcher-elements,
+  )
 }
