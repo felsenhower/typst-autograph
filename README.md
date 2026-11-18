@@ -147,7 +147,6 @@ To draw a graph with autograph, we perform the following steps:
 ## Limitations / Planned Features
 
 - It would be nice to add a `graph` function in which we can optionally enclose our nodes and edges. This would allow us to have multiple graphs that are rendered independently from each other. The `graph` function should have an optional parameter `origin` that puts the root node to that location (instead of `(0pt, 0pt)`). This may also come in handy when we're only dealing with one graph.
-- Everything about Bézier stated above...
 - We're currently not supporting edge labels.
 - We're currently not supporting undirected graphs.
 - We're currently unable to set node, edge, and graph attributes. For example, it would be nice to set the drawing direction (`rankdir`) among other things. In some cases, attributes should be set automatically. For example, when we set `node-shape: rect` in the diagram, we should also pass `shape=box` to Graphviz to improve rendering in some edge cases.
