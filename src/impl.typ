@@ -1,5 +1,5 @@
 #import "@preview/fletcher:0.6.0" as fletcher
-#import "diagraph-layout/lib.typ" as dgl
+#import "diagraph-layout/lib.typ" as diagraph-layout
 #import fletcher: cetz
 
 
@@ -155,12 +155,12 @@
         }
       ).to-dict()
       assert(nodes.keys() == node-dimensions.keys())
-      let layout = dgl.layout-graph(
+      let layout = diagraph-layout.layout-graph(
         engine: engine,
         directed: true,
         ..node-dimensions.pairs().map(
           ((name, measurements)) => {
-            dgl.node(
+            diagraph-layout.node(
               name,
               width: measurements.width,
               height: measurements.height
@@ -169,7 +169,7 @@
         ),
         ..edges.pairs().map(
           ((name, edge)) => {
-            dgl.edge(
+            diagraph-layout.edge(
               str(edge.value.tail),
               str(edge.value.head),
               name: name,

@@ -1,1 +1,7 @@
-#import "./src/impl.typ": diagram, node, edge, fletcher
+#import "./src/impl.typ": (
+  diagram,
+  node,
+  edge,
+  fletcher,
+  diagraph-layout
+)
