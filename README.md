@@ -9,7 +9,7 @@ A [Typst](https://typst.app/) package for drawing graphs with automatic layout, 
 ![A Simple Example](examples/1-simple-bezier.svg)
 
 ```typ
-#import "@preview/autograph:0.1.0": diagram, node, edge
+#import "@preview/autograph:0.1.1": diagram, node, edge
 #diagram(
   bezier: true,
   node(<foo>),
@@ -51,7 +51,7 @@ Here, we disabled the `bezier` option because **styling with `bezier: true` has 
 ![Styling Example](examples/3-styling-no-bezier.svg)
 
 ```typ
-#import "@preview/autograph:0.1.0": diagram, node, edge
+#import "@preview/autograph:0.1.1": diagram, node, edge
 #import "@preview/fletcher:0.5.8": shapes
 #diagram(
   node-shape: shapes.rect,
@@ -75,7 +75,7 @@ You can however use CeTZ primitives to style the edges individually. In the exam
 ![Styling Example with Bézier](examples/4-styling-with-bezier.svg)
 
 ```typ
-#import "@preview/autograph:0.1.0": diagram, node, edge
+#import "@preview/autograph:0.1.1": diagram, node, edge
 #import "@preview/fletcher:0.5.8": shapes
 #let edge-style(color) = (
   stroke: 1pt + color,
@@ -100,7 +100,7 @@ Since autograph's diagram works as a drop-in replacement for fletcher's diagram,
 ![Example with Fletcher](examples/5-mix-with-fletcher.svg)
 
 ```typ
-#import "@preview/autograph:0.1.0" as autograph: diagram
+#import "@preview/autograph:0.1.1" as autograph: diagram
 #import "@preview/fletcher:0.5.8" as fletcher: shapes
 #diagram(
   engine: "neato",
@@ -127,7 +127,7 @@ Alternatively, you may want to wrap your autograph elements and your fletcher el
 ![Another Example with Fletcher](examples/6-mix-with-fletcher-alternative.svg)
 
 ```typ
-#import "@preview/autograph:0.1.0" as autograph: diagram
+#import "@preview/autograph:0.1.1" as autograph: diagram
 #import "@preview/fletcher:0.5.8" as fletcher
 #diagram(
   engine: "circo",
@@ -214,6 +214,17 @@ By the way, we are discarding the start and end nodes of the edge that Graphviz 
 When we want to have actual Bézier, we need to hack a little and use fletcher's CeTZ integration. The drawing works fine, but CeTZ doesn't care about our defined edge styles and everything that has to do with marks becomes a bit annoying.
 
 This is just a workaround for the moment, and when fletcher supports Bézier curves, I will remove the CeTZ part.
+
+## Changelog
+
+### 0.1.1
+
+- Use and bundle [forked diagraph-layout](https://github.com/felsenhower/typst-autograph) instead of [upstream version](https://github.com/Robotechnic/diagraph-layout).
+- Maintain edge order by supplying edge names instead of the previous hack.
+
+### 0.1.0
+
+- Initial release
 
 ## Limitations / Planned Features
 
