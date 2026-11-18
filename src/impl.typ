@@ -160,9 +160,6 @@
             let min-len = 8pt
             let step = 1pt
             let dummy-id = min-len + (i * step)
-            // Note: Currently, the "head" and "tail" arguments of the edge function are incorrectly named.
-            // Therefore, we need to effectively call it as edge(head: tail, tail: head) for it to be correct later.
-            // Since this feels more natural anyway, it's likely that the parameter names are simply a typo.
             dgl.edge(
               str(edge.value.tail),
               str(edge.value.head),
