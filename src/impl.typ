@@ -82,6 +82,36 @@
   )
 }
 
+#let is-autograph-elem(e) = {
+  if type(e) != content {
+    return false
+  }
+  let fields = e.fields()
+  let value = fields.at("value", default: none)
+  if type(value) != dictionary {
+    return false
+  }
+  let class = value.at("class", default: none)
+  if type(class) != str {
+    return false
+  }
+  return class.starts-with("autograph-")
+}
+
+#let is-autograph-node(e) = {
+  if not is-autograph-elem(e) {
+    return false
+  }
+  return e.value.class == "autograph-node"
+}
+
+#let is-autograph-edge(e) = {
+  if not is-autograph-elem(e) {
+    return false
+  }
+  return e.value.class == "autograph-edge"
+}
+
 #let diagram(
   engine: "dot",
   ..args,
@@ -99,19 +129,14 @@
       diagram-args.insert(k, v)
     }
   }
-  let is-autograph-elem(e) = e.value.class.starts-with("autograph-")
   let fletcher-elements = args.pos().flatten().filter(e => not is-autograph-elem(e))
   let autograph-elements = args.pos().flatten().filter(is-autograph-elem)
   let (rendered-nodes, edges, layout-edges) = {
     if autograph-elements.len() > 0 {
-      let nodes = autograph-elements.filter(
-        e => e.value.class == "autograph-node"
-      ).map(
+      let nodes = autograph-elements.filter(is-autograph-node).map(
         e => (str(e.value.name), e)
       ).to-dict()
-      let edges = autograph-elements.filter(
-        e => e.value.class == "autograph-edge"
-      ).enumerate().map(
+      let edges = autograph-elements.filter(is-autograph-edge).enumerate().map(
         ((i, e)) => ("edge-" + str(i), e)
       ).to-dict()
       let node-dimensions = nodes.pairs().map(
