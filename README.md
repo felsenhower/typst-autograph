@@ -2,16 +2,15 @@
 
 ![autograph logo](logo/logo.svg)
 
-A [Typst](https://typst.app/) package for drawing graphs with automatic layout, built on top of [fletcher](https://github.com/Jollywatt/typst-fletcher) and [diagraph-layout](https://github.com/Robotechnic/diagraph-layout).
+A [Typst](https://typst.app/) package for drawing graphs with automatic layout, built on top of [fletcher](https://github.com/Jollywatt/typst-fletcher) and [diagraph-layout](https://github.com/felsenhower/diagraph-layout) (Note: Since autograph v0.1.1, we are using a forked version of diagraph-layout that contains multiple fixes. I will switch back to the upstream diagraph-layout if the fixes get merged).
 
 ## Usage Examples
 
 ![A Simple Example](examples/1-simple-bezier.svg)
 
 ```typ
-#import "@preview/autograph:0.1.1": diagram, node, edge
+#import "@preview/autograph:0.1.2": diagram, node, edge
 #diagram(
-  bezier: true,
   node(<foo>),
   node(<bar>),
   node(<baz>),
@@ -23,11 +22,11 @@ A [Typst](https://typst.app/) package for drawing graphs with automatic layout, 
 
 autograph's syntax is somewhat of a hybrid between fletcher and dot ([Graphviz](https://graphviz.org/)).
 
-In fact, it uses Graphviz's layout engine via [diagraph-layout](https://github.com/Robotechnic/diagraph-layout) to determine the concrete node positions and edge paths and uses fletcher to render the layout.
+In fact, it uses Graphviz's layout engine via [diagraph-layout](https://github.com/felsenhower/diagraph-layout) to determine the concrete node positions and edge paths and uses fletcher to render the layout.
 
 The `autograph.diagram` function is a wrapper around `fletcher.diagram` that works as a drop-in replacement with some additional features.
 
-For comparison's sake, here is same graph written with dot, rendered with [diagraph](https://github.com/Robotechnic/diagraph):
+For comparison's sake, here is same graph written with dot, rendered with [diagraph](https://github.com/Robotechnic/diagraph), a more low-level interface to Graphviz:
 
 ![Graphviz Example](examples/2-diagraph.svg)
 
@@ -44,17 +43,14 @@ For comparison's sake, here is same graph written with dot, rendered with [diagr
 )
 ````
 
-autograph also supports flexibly styling your graph with fletcher. The example below shows how you can customize the look for your nodes and edges. See the fletcher [manual](https://github.com/typst/packages/raw/main/packages/preview/fletcher/0.5.8/docs/manual.pdf?raw=true) to find out more about styling.
+autograph also supports flexibly styling your graph with fletcher. The example below shows how you can customize the look for your nodes and edges. See the fletcher [manual](https://fletcher-package.github.io/manual/intro.html) to find out more about styling.
 
-Here, we disabled the `bezier` option because **styling with `bezier: true` has some limitations (see below)**. You can achieve a somewhat similar look by playing around with the edge's `corner-radius` option (or the diagram's `edge-corner-radius` option). However, it has to be manually tuned and also isn't real Bézier. If you omit the option from the example below, the edges will look a bit rough.
-
-![Styling Example](examples/3-styling-no-bezier.svg)
+![Styling Example](examples/3-styling.svg)
 
 ```typ
-#import "@preview/autograph:0.1.1": diagram, node, edge
-#import "@preview/fletcher:0.5.8": shapes
+#import "@preview/autograph:0.1.2": diagram, node, edge
 #diagram(
-  node-shape: shapes.rect,
+  node-shape: "rect",
   node-fill: red.lighten(75%),
   node-stroke: 1pt + red,
   edge-stroke: 1pt + blue,
@@ -68,67 +64,13 @@ Here, we disabled the `bezier` option because **styling with `bezier: true` has 
 )
 ```
 
-If you want to achieve the same styling with `bezier: true`, you will have to use a workaround: Since the Bézier curves are drawn with fletcher's CeTZ integration, we cannot use fletcher primitives to style them, i.e. the diagram's `edge-stroke` option is ignored (among others).
-
-You can however use CeTZ primitives to style the edges individually. In the example below, each edge is styled explicitly. See the CeTZ [online manual](https://cetz-package.github.io/docs/basics/styling) to find out more about what options you can pass.
-
-![Styling Example with Bézier](examples/4-styling-with-bezier.svg)
-
-```typ
-#import "@preview/autograph:0.1.1": diagram, node, edge
-#import "@preview/fletcher:0.5.8": shapes
-#let edge-style(color) = (
-  stroke: 1pt + color,
-  mark: (end: ">", fill: color, scale: 1.5)
-)
-#diagram(
-  bezier: true,
-  node-shape: shapes.rect,
-  node-fill: red.lighten(75%),
-  node-stroke: 1pt + red,
-  node(<foo>, [Foo!]),
-  node(<bar>, [Bar!]),
-  node(<baz>, [Baz!], stroke: yellow, fill: yellow.lighten(75%)),
-  edge(<foo>, <bar>, ..edge-style(blue)),
-  edge(<foo>, <baz>, ..edge-style(blue)),
-  edge(<baz>, <bar>, ..edge-style(green)),
-)
-```
-
 Since autograph's diagram works as a drop-in replacement for fletcher's diagram, you can also use fletcher nodes and edges and refer to the autograph nodes via their labels.
 
-![Example with Fletcher](examples/5-mix-with-fletcher.svg)
+![Example with Fletcher](examples/4-mix-with-fletcher.svg)
 
 ```typ
-#import "@preview/autograph:0.1.1" as autograph: diagram
-#import "@preview/fletcher:0.5.8" as fletcher: shapes
-#diagram(
-  engine: "neato",
-  autograph.node(<foo>),
-  autograph.node(<bar>),
-  autograph.node(<baz>),
-  autograph.edge(<foo>, <bar>),
-  autograph.edge(<foo>, <baz>),
-  autograph.edge(<baz>, <bar>),
-  fletcher.node(
-    enclose: (<foo>, <bar>, <baz>),
-    shape: shapes.brace.with(
-      dir: right,
-      length: 100% - 3em,
-      sep: 10pt,
-      label: [Look at this graph!]
-    )
-  ),
-)
-```
-
-Alternatively, you may want to wrap your autograph elements and your fletcher elements in two separate blocks, like shown below:
-
-![Another Example with Fletcher](examples/6-mix-with-fletcher-alternative.svg)
-
-```typ
-#import "@preview/autograph:0.1.1" as autograph: diagram
-#import "@preview/fletcher:0.5.8" as fletcher
+#import "@preview/autograph:0.1.2" as autograph: diagram
+#import "@preview/fletcher:0.6.0" as fletcher
 #diagram(
   engine: "circo",
   node-fill: white,
@@ -144,11 +86,11 @@ Alternatively, you may want to wrap your autograph elements and your fletcher el
     )
   },
   {
-    import fletcher: shapes, node, edge
+    import fletcher: node, edge
     (
       node(
         enclose: (<foo>, <bar>, <baz>),
-        shape: shapes.rect,
+        shape: "rect",
         stroke: 1pt + blue,
         inset: 0.5em,
         fill: blue.lighten(75%),
@@ -183,39 +125,15 @@ To draw a graph with autograph, we perform the following steps:
 2. We acquire the layout using diagraph-layout's `layout-graph` function. Here, we pass the `width` and `height` of each node we measured before.
 3. We guarantee that the order of the nodes and edges will be preserved and that the first node that was supplied will be positioned at `(0pt, 0pt)`. Since diagraph-layout makes no such guarantees, we need to reorder the nodes and edges and shift all points.
 4. We draw the nodes as fletcher nodes at the exact positions we acquired before.
-5. We draw the edges. Depending on the value of the `bezier` parameter, we use fletcher edges or CeTZ functions. Since this is quite complicated, more on that below...
-
-### Bézier Curves
-
-In Graphviz, edges are rendered as [Bézier curves](https://en.wikipedia.org/wiki/B%C3%A9zier_curve), so by extension, diagraph-layout gives us the edges as a list of Bézier control points. A single Bézier segment consists of 4 control points. The first and last determine the start and end of the curve, and the two middle
-ones determine its curvature. If we have more than one segment, we simply get a longer list of control points where the condition `(len - 1) % 3 == 0` holds, so the list can have the length 4, 7, 10, 13, 16, ...
-
-For example, we might get a list of 10 control points:
-```
-(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9)
-```
-This stands for a Bézier curve with 3 segments:
-```
-((p0, p1, p2, p3), (p3, p4, p5, p6), (p6, p7, p8, p9))
-```
-
-### Drawing Bézier Curves with fletcher
-
-fletcher currently (as of v0.5.8) does not support Bézier edges. This is a feature that is planned for v0.6.0. Therefore, for `bezier: false`, we simply draw the edges using the individual Bézier segments' start and end points. In the example above, this is:
-```
-(p0, p3, p6, p9)
-```
-As has been shown in one of the examples above, we can make this look a bit nicer with the `corner-radius` argument.
-
-By the way, we are discarding the start and end nodes of the edge that Graphviz gave us and use the fletcher nodes instead. Since the node rendering is not 100% accurate, this gives a nicer rendering.
-
-### Drawing Bézier Curves with CeTZ
-
-When we want to have actual Bézier, we need to hack a little and use fletcher's CeTZ integration. The drawing works fine, but CeTZ doesn't care about our defined edge styles and everything that has to do with marks becomes a bit annoying.
-
-This is just a workaround for the moment, and when fletcher supports Bézier curves, I will remove the CeTZ part.
+5. We draw the edges. We do this by using `fletcher`'s new `custom` edge kinds in combination with `cetz.draw.bezier`.
 
 ## Changelog
+
+### 0.1.2
+
+- Use fletcher v0.6.0.
+- Implement Bézier edges properly with fletcher's new features.
+- Remove `bezier` argument from `diagram`.
 
 ### 0.1.1
 
@@ -224,7 +142,7 @@ This is just a workaround for the moment, and when fletcher supports Bézier cur
 
 ### 0.1.0
 
-- Initial release
+- Initial release.
 
 ## Limitations / Planned Features
 
