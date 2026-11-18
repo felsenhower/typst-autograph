@@ -14,7 +14,7 @@ install-local: package
     cp -r autograph ~/.local/share/typst/packages/local/autograph/{{VERSION}}
 
 compile-examples:
-    cd examples && for f in [0-9]*.typ ; do typst compile --format svg "$f" ; done
+    cd examples && for f in [0-9]*.typ ; do printf 'Compiling "%s"...\n' "$f" && typst compile --format svg "$f" ; done
 
 build-deps:
     # Prerequisites:

@@ -1,10 +1,9 @@
 #import "template.typ": template
 #show: template
 
-#import "@local/autograph:0.1.0": diagram, node, edge
-#import "@preview/fletcher:0.5.8": shapes
+#import "@local/autograph:0.1.2": diagram, node, edge
 #diagram(
-  node-shape: shapes.rect,
+  node-shape: "rect",
   node-fill: red.lighten(75%),
   node-stroke: 1pt + red,
   edge-stroke: 1pt + blue,

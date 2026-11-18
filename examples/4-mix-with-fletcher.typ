@@ -1,8 +1,8 @@
 #import "template.typ": template
 #show: template
 
-#import "@local/autograph:0.1.0" as autograph: diagram
-#import "@preview/fletcher:0.5.8" as fletcher
+#import "@local/autograph:0.1.2" as autograph: diagram
+#import "@preview/fletcher:0.6.0" as fletcher
 #diagram(
   engine: "circo",
   node-fill: white,
@@ -18,11 +18,11 @@
     )
   },
   {
-    import fletcher: shapes, node, edge
+    import fletcher: node, edge
     (
       node(
         enclose: (<foo>, <bar>, <baz>),
-        shape: shapes.rect,
+        shape: "rect",
         stroke: 1pt + blue,
         inset: 0.5em,
         fill: blue.lighten(75%),
