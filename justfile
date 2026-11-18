@@ -15,9 +15,21 @@ install-local: package
 compile-examples:
     cd examples && for f in [0-9]*.typ ; do typst compile --format svg "$f" ; done
 
-package:
+build-deps:
+    # Prerequisites:
+    # - Install emscripten
+    # - Add `source /etc/profile.d/emscripten.sh` to `.zshrc`
+    # - cargo install wasi-stub
+    # - cargo install --git https://github.com/Robotechnic/WebAssembly-protocol-generator.git
+    git submodule update --init
+    make -C src/diagraph-layout wasm
+    make -C src/diagraph-layout module
+
+package: build-deps
     [ -d autograph ] && rm -r autograph || true
     mkdir autograph
-    cp lib.typ autograph/
-    cp -r src autograph/
     cp typst.toml autograph/
+    cp lib.typ autograph/
+    mkdir autograph/src
+    cp src/impl.typ autograph/src/
+    cp -r src/diagraph-layout/diagraph-layout autograph/src/

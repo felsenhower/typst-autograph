@@ -1,5 +1,5 @@
 #import "@preview/fletcher:0.5.8" as fletcher
-#import "@preview/diagraph-layout:0.0.1" as dgl
+#import "diagraph-layout/lib.typ" as dgl
 
 #let node(name, ..args) = {
   assert(args.pos().len() <= 1)

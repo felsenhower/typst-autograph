@@ -1,0 +1,3 @@
+[submodule "src/diagraph-layout"]
+	path = src/diagraph-layout
+	url = https://github.com/felsenhower/diagraph-layout.git
