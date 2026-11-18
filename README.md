@@ -64,13 +64,12 @@ autograph also supports flexibly styling your graph with fletcher. The example b
 )
 ```
 
-Since autograph's diagram works as a drop-in replacement for fletcher's diagram, you can also use fletcher nodes and edges and refer to the autograph nodes via their labels.
+Since autograph's diagram works as a drop-in replacement for fletcher's diagram, you can also use fletcher nodes and edges and refer to the autograph nodes via their labels. We re-export `fletcher`, so you can use that to make sure that you're using the correct version.
 
 ![Example with Fletcher](examples/4-mix-with-fletcher.svg)
 
 ```typ
-#import "@preview/autograph:0.1.2" as autograph: diagram
-#import "@preview/fletcher:0.6.0" as fletcher
+#import "@preview/autograph:0.1.2" as as autograph: diagram, fletcher
 #diagram(
   engine: "circo",
   node-fill: white,
