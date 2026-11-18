@@ -53,33 +53,9 @@
   segments
 }
 
-// Replaces the start and end points of a list of Bézier segements.
-// For example: 
-// ((p0, p1, p2, p3), (p3, p4, p5, p6)) -> ((new-start, p1, p2, p3), (p3, p4, p5, new-end))
-// or
-// ((p0, p1, p2, p3)) -> ((new-start, p1, p2, new-end))
-#let replace-bezier-bounds(segments, new-start, new-end) = {
-  let replace-start(segments, replacement) = (
-    (
-      replacement,
-      ..segments.first().slice(1),
-    ),
-    ..segments.slice(1),
-  )
-  let replace-end(segments, replacement) = (
-    ..segments.slice(0, -1),
-    (
-      ..segments.last().slice(0, -1),
-      replacement,
-    ),
-  )
-  replace-start(
-    replace-end(
-      segments,
-      new-end
-    ),
-    new-start
-  )
+#let replace-bounds(points, new-start, new-end) = {
+  assert(points.len() >= 2)
+  (new-start, ..points.slice(1, -1), new-end)
 }
 
 #let is-autograph-elem(e) = {
@@ -256,22 +232,23 @@
       // https://fletcher-package.github.io/manual/edges.html#custom-edge
       let path-fun = points => {
         let segments = bezier-segments(points)
-        // Replace the tail and head with the fletcher nodes.
-        // In most cases, this won't make a noticable difference.
-        // In rare cases, this makes for a nicer layout.
-        let segments = replace-bezier-bounds(
-          segments,
-          edge.value.tail,
-          edge.value.head
-        )
         cetz.draw.merge-path({
           for (start, ctrl-start, ctrl-end, end) in segments {
             cetz.draw.bezier(start, end, ctrl-start, ctrl-end)
           }
         })
       }
+      let points = layout-edge.points
+      // Replace the tail and head with the fletcher nodes.
+      // In most cases, this won't make a noticable difference.
+      // In rare cases, this makes for a nicer layout.
+      let points = replace-bounds(
+        points,
+        edge.value.tail,
+        edge.value.head
+      )
       fletcher.edge(
-        ..layout-edge.points,
+        ..points,
         marks: "-solid",
         ..edge.value.args,
         path: path-fun
