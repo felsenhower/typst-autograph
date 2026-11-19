@@ -88,6 +88,13 @@
   return e.value.class == "autograph-edge"
 }
 
+#let subtract-points(p1, p2) = {
+  (
+    x: p1.x - p2.x,
+    y: p1.y - p2.y,
+  )
+}
+
 #let diagram(
   engine: "dot",
   ..args,
@@ -105,49 +112,72 @@
       diagram-args.insert(k, v)
     }
   }
-  let fletcher-elements = args.pos().flatten().filter(e => not is-autograph-elem(e))
-  let autograph-elements = args.pos().flatten().filter(is-autograph-elem)
-  let (rendered-nodes, edges, layout-edges) = {
-    if autograph-elements.len() > 0 {
-      let nodes = autograph-elements.filter(is-autograph-node).map(
-        e => (str(e.value.name), e)
-      ).to-dict()
-      let edges = autograph-elements.filter(is-autograph-edge).enumerate().map(
-        ((i, e)) => ("edge-" + str(i), e)
-      ).to-dict()
-      let node-dimensions = nodes.pairs().map(
-        ((name, node)) => {
-          let measurements = measure(
-            fletcher.diagram(
-              ..diagram-args,
-              fletcher.node(
-                (0,0), // Let's hope that this keeps people from manually supplying a position in the node args
-                ..node.value.args,
-                node.value.body
-              )
+  let elements = args.pos().flatten()
+  let (nodes, edges) = {
+    let nodes = (:)
+    let edges = (:)
+    for (i, elem) in elements.enumerate() {
+      if is-autograph-node(elem) {
+        let node = elem.value
+        let name = str(node.name)
+        if nodes.keys().contains(name) {
+          panic("Duplicate node \"" + name + "\".")
+        }
+        let measurements = measure(
+          fletcher.diagram(
+            ..diagram-args,
+            fletcher.node(
+              (0,0), // Let's hope that this keeps people from manually supplying a position in the node args
+              ..node.args,
+              node.body
             )
           )
-          (name, measurements)
+        )
+        nodes.insert(name, (
+          name: node.name,
+          body: node.body,
+          args: node.args,
+          measurements: measurements,
+        ))
+      } else if is-autograph-edge(elem) {
+        let edge = elem.value
+        let tail = str(edge.tail)
+        if not nodes.keys().contains(tail) {
+          panic("Node with name \"" + tail + "\" has not been defined.")
         }
-      ).to-dict()
-      assert(nodes.keys() == node-dimensions.keys())
+        let head = str(edge.head)
+        if not nodes.keys().contains(head) {
+          panic("Node with name \"" + head + "\" has not been defined.")
+        }
+        edges.insert("edge-" + str(i), (
+          tail: edge.tail,
+          head: edge.head,
+          args: edge.args,
+        ))
+      }
+    }
+    (nodes, edges)
+  }
+  let (nodes, edges) = {
+    if nodes.len() > 0 {
       let layout = diagraph-layout.layout-graph(
         engine: engine,
         directed: true,
-        ..node-dimensions.pairs().map(
-          ((name, measurements)) => {
+        ..nodes.pairs().map(
+          ((name, node)) => {
+            let measurements = node.measurements
             diagraph-layout.node(
               name,
               width: measurements.width,
-              height: measurements.height
+              height: measurements.height,
             )    
           }
         ),
         ..edges.pairs().map(
           ((name, edge)) => {
             diagraph-layout.edge(
-              str(edge.value.tail),
-              str(edge.value.head),
+              str(edge.tail),
+              str(edge.head),
               name: name,
             )
           }
@@ -156,104 +186,98 @@
       assert(not layout.errored)
       let node-positions = layout.nodes.map(
         (node) => {
-          (node.name, (node.x, node.y))
+          (node.name, (
+            x: node.x,
+            y: node.y
+          ))
         }
       ).to-dict()
-      // diagraph-layout does not guarantee that the input and output order of the nodes is identical.
-      // We ensure this by explicitly re-ordering the dict.
-      let node-positions = nodes.keys().map(
-        name => (name, node-positions.at(name))
-      ).to-dict()
-      assert(nodes.keys() == node-positions.keys())
       // We guarantee that the first node that was defined will be at position (0,0).
       // To do so, we offset all positions by the first position.
       let position-offset = node-positions.values().at(0)
       let node-positions = node-positions.pairs().map(
-        ((name, (x,y))) => {
-          let (dx, dy) = position-offset
-          (name, (x - dx, y - dy))
-        }
+        ((name, pos)) => (name, subtract-points(pos, position-offset))
       ).to-dict()
-      let layout-edges = layout.edges.map(
+      let nodes = nodes.pairs().map(
+        ((name, node)) => (name, (
+          body: node.body,
+          args: node.args,
+          measurements: node.measurements,
+          position: node-positions.at(name)
+        ))
+      ).to-dict()
+      let edge-paths = layout.edges.map(
         (edge) => {
-          (edge.name, (
-            tail: edge.tail,
-            head: edge.head,
-            points: edge.points
-          ))
+          (edge.name, edge.points)
         }
       ).to-dict()
-      // diagraph-layout does not guarantee that the input and output order of the edges is identical.
-      // We ensure this by explicitly re-ordering the dict.
-      let layout-edges = edges.keys().map(
-        name => (name, layout-edges.at(name))
-      ).to-dict()
-      assert(edges.keys() == layout-edges.keys())
-      let layout-edges = layout-edges.pairs().map(
+      let edge-paths = edge-paths.pairs().map(
         ((name, edge)) => {
-          let points = edge.points.map(
-            // We are again using the position-offset, just like with the node-positions:
-            point => {
-              let (dx, dy) = position-offset
-              (point.x - dx, point.y - dy)
-            }
+          let points = edge.map(
+            point => subtract-points(point, position-offset)
           )
-          (name, 
-            (
-              head: edge.head,
-              tail: edge.tail,
-              points: points,
-            ),
-          )
+          (name, points)
         }
       ).to-dict()
-      let rendered-nodes = {
-        for ((name, node), (x, y)) in nodes.pairs().zip(node-positions.values()) {
-          fletcher.node(
-            (x, y),
-            name: node.value.name,
-            ..node.value.args,
-            node.value.body
-          )
-        }
-      }
-      (rendered-nodes, edges, layout-edges)
+      let edges = edges.pairs().map(
+        ((name, edge)) => (name, (
+          tail: edge.tail,
+          head: edge.head,
+          args: edge.args,
+          points: edge-paths.at(name),
+        ))
+      ).to-dict()
+      (nodes, edges)
     } else {
-      ((), (), ())
-    }
+      (nodes, edges)
+    }    
   }
+  let rendered-elements = elements.enumerate().map(
+    ((i, elem)) => {
+      if is-autograph-node(elem) {
+        let name = str(elem.value.name)
+        let node = nodes.at(name)
+        fletcher.node(
+          (node.position.x, node.position.y),
+          name: name,
+          ..node.args,
+          node.body
+        )
+      } else if is-autograph-edge(elem) {
+        let name = "edge-" + str(i)
+        let edge = edges.at(name)
+        // Function for custom edge
+        // https://fletcher-package.github.io/manual/edges.html#custom-edge
+        let path-fun = points => {
+          let segments = bezier-segments(points)
+          cetz.draw.merge-path({
+            for (start, ctrl-start, ctrl-end, end) in segments {
+              cetz.draw.bezier(start, end, ctrl-start, ctrl-end)
+            }
+          })
+        }
+        let points = edge.points.map(p => (p.x, p.y))
+        // Replace the tail and head with the fletcher nodes.
+        // In most cases, this won't make a noticable difference.
+        // In rare cases, this makes for a nicer layout.
+        let points = replace-bounds(
+          points,
+          edge.tail,
+          edge.head
+        )
+        fletcher.edge(
+          ..points,
+          marks: "-solid",
+          ..edge.args,
+          path: path-fun
+        )
+      } else {
+        elem
+      }
+    }
+  )
   fletcher.diagram(
     ..diagram-args,
-    rendered-nodes,
-    for (edge, layout-edge) in edges.values().zip(layout-edges.values()) {
-      assert(str(edge.value.tail) == layout-edge.tail)
-      assert(str(edge.value.head) == layout-edge.head)
-      // Function for custom edge
-      // https://fletcher-package.github.io/manual/edges.html#custom-edge
-      let path-fun = points => {
-        let segments = bezier-segments(points)
-        cetz.draw.merge-path({
-          for (start, ctrl-start, ctrl-end, end) in segments {
-            cetz.draw.bezier(start, end, ctrl-start, ctrl-end)
-          }
-        })
-      }
-      let points = layout-edge.points
-      // Replace the tail and head with the fletcher nodes.
-      // In most cases, this won't make a noticable difference.
-      // In rare cases, this makes for a nicer layout.
-      let points = replace-bounds(
-        points,
-        edge.value.tail,
-        edge.value.head
-      )
-      fletcher.edge(
-        ..points,
-        marks: "-solid",
-        ..edge.value.args,
-        path: path-fun
-      )
-    },
-    fletcher-elements,
+    rendered-elements
   )
 }
