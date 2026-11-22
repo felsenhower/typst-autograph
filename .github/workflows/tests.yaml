@@ -19,8 +19,26 @@ jobs:
         with:
           tool: tytanic@0.4.1
 
+      - name: Install typst-package-check
+        uses: taiki-e/cache-cargo-install-action@v2
+        with:
+          tool: typst-package-check
+          git: https://github.com/typst/package-check
+          tag: v0.7.0
+
+      - name: Install just
+        uses: extractions/setup-just@v4
+        with:
+          just-version: '1.59.0'
+
       - name: Run test suite
         run: tt run
+
+      - name: Run package-check
+        run: |
+          make -C src/diagraph-layout module
+          just _package
+          cd autograph && typst-package-check check
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
