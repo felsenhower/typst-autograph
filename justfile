@@ -31,6 +31,9 @@ package: build-deps
     mkdir autograph
     cp typst.toml autograph/
     cp lib.typ autograph/
+    cp README.md autograph/
+    cp -r examples autograph/
+    cp -r logo autograph/
     mkdir autograph/src
     cp src/impl.typ autograph/src/
     cp -r src/diagraph-layout/diagraph-layout autograph/src/
