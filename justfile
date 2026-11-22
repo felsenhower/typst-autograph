@@ -37,3 +37,9 @@ package: build-deps
     mkdir autograph/src
     cp src/impl.typ autograph/src/
     cp -r src/diagraph-layout/diagraph-layout autograph/src/
+
+test:
+    tt run
+
+package-check: package
+    cd autograph && typst-package-check check
