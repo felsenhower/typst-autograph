@@ -28,6 +28,6 @@ jobs:
 
       - name: Run package-check
         run: |
-          just package
+          just _package
           cd autograph
           typst-package-check check

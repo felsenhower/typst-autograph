@@ -26,8 +26,7 @@ build-deps:
     make -C src/diagraph-layout wasm
     make -C src/diagraph-layout module
 
-package: build-deps
-    [ -d autograph ] && rm -r autograph || true
+_package:
     mkdir autograph
     cp typst.toml autograph/
     cp lib.typ autograph/
@@ -37,6 +36,10 @@ package: build-deps
     mkdir autograph/src
     cp src/impl.typ autograph/src/
     cp -r src/diagraph-layout/diagraph-layout autograph/src/
+
+package: build-deps
+    [ -d autograph ] && rm -r autograph || true
+    just _package
 
 test:
     tt run
