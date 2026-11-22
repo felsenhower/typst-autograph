@@ -28,6 +28,7 @@ jobs:
 
       - name: Run package-check
         run: |
+          make -C src/diagraph-layout module
           just _package
           cd autograph
           typst-package-check check
