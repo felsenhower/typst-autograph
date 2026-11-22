@@ -8,7 +8,7 @@ description = "Automatic graph layout for fletcher"
 repository = "https://github.com/felsenhower/typst-autograph.git"
 categories = ["visualization", "components"]
 keywords = ["graphviz", "graph", "diagram", "fletcher", "dot"]
-compiler = "0.13.0"
+compiler = "0.15.0"
 exclude = [
   "justfile",
   "examples/",
