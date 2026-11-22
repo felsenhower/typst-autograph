@@ -69,7 +69,7 @@ Since autograph's diagram works as a drop-in replacement for fletcher's diagram,
 ![Example with Fletcher](examples/4-mix-with-fletcher.svg)
 
 ```typ
-#import "@preview/autograph:0.1.2" as as autograph: diagram, fletcher
+#import "@preview/autograph:0.1.2" as autograph: diagram, fletcher
 #diagram(
   engine: "circo",
   node-fill: white,
