@@ -36,6 +36,15 @@
     e.value.value
 }
 
+#let extend-element(e, added-value) = {
+    assert(is-autograph-element(e))
+    testyfy.typeof(added-value, dictionary)
+    let class = get-class(e)
+    let old-value = get-value(e)
+    let new-value = old-value + added-value
+    autograph-element(class, new-value)
+}
+
 #let fixture-sample-elem() = {
     autograph-element("foo", ("bar": "baz"))
 }
@@ -65,4 +74,20 @@
 
 #let panic-on-autograph-element() = {
     autograph-element(42, ("foo": "bar"))
+}
+
+#let test-extend-element() = {
+    let e = fixture-sample-elem()
+    let more = (
+        "monkey": "tree"
+    )
+    let received = extend-element(e, more)
+    let expected = metadata((
+        class: "autograph-foo",
+        value: (
+            bar: "baz",
+            monkey: "tree"
+        )
+    ))
+    assert(received == expected)
 }

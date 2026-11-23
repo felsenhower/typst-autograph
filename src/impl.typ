@@ -1,5 +1,5 @@
 #import "./dependencies.typ": fletcher, cetz, diagraph-layout
-#import "./elements.typ": get-value
+#import "./elements.typ": get-value, extend-element
 #import "./node.typ": node, is-autograph-node
 #import "./edge.typ": edge, is-autograph-edge
 #import "./paths.typ": replace-bounds, bezier-segments
@@ -49,12 +49,7 @@
             )
           )
         )
-        nodes.insert(name, (
-          name: node.name,
-          body: node.body,
-          args: node.args,
-          measurements: measurements,
-        ))
+        nodes.insert(name, extend-element(elem, (measurements: measurements)))
       } else if is-autograph-edge(elem) {
         let edge = get-value(elem)
         let tail = str(edge.tail)
@@ -65,11 +60,8 @@
         if not nodes.keys().contains(head) {
           panic("Node with name \"" + head + "\" has not been defined.")
         }
-        edges.insert("edge-" + str(i), (
-          tail: edge.tail,
-          head: edge.head,
-          args: edge.args,
-        ))
+
+        edges.insert("edge-" + str(i), elem)
       }
     }
     (nodes, edges)
@@ -80,7 +72,8 @@
         engine: engine,
         directed: true,
         ..nodes.pairs().map(
-          ((name, node)) => {
+          ((name, elem)) => {
+            let node = get-value(elem)
             let measurements = node.measurements
             diagraph-layout.node(
               name,
@@ -90,7 +83,8 @@
           }
         ),
         ..edges.pairs().map(
-          ((name, edge)) => {
+          ((name, elem)) => {
+            let edge = get-value(elem)
             diagraph-layout.edge(
               str(edge.tail),
               str(edge.head),
@@ -115,12 +109,10 @@
         ((name, pos)) => (name, subtract-points(pos, position-offset))
       ).to-dict()
       let nodes = nodes.pairs().map(
-        ((name, node)) => (name, (
-          body: node.body,
-          args: node.args,
-          measurements: node.measurements,
-          position: node-positions.at(name)
-        ))
+        ((name, elem)) => {
+          let node = get-value(elem)
+          (name, extend-element(elem, (position: node-positions.at(name))))
+        }
       ).to-dict()
       let edge-paths = layout.edges.map(
         (edge) => {
@@ -136,12 +128,10 @@
         }
       ).to-dict()
       let edges = edges.pairs().map(
-        ((name, edge)) => (name, (
-          tail: edge.tail,
-          head: edge.head,
-          args: edge.args,
-          points: edge-paths.at(name),
-        ))
+        ((name, elem)) => {
+          let edge = get-value(elem)
+          (name, extend-element(elem, (points: edge-paths.at(name))))
+        }
       ).to-dict()
       (nodes, edges)
     } else {
@@ -152,7 +142,7 @@
     ((i, elem)) => {
       if is-autograph-node(elem) {
         let name = str(get-value(elem).name)
-        let node = nodes.at(name)
+        let node = get-value(nodes.at(name))
         fletcher.node(
           (node.position.x, node.position.y),
           name: name,
@@ -161,7 +151,7 @@
         )
       } else if is-autograph-edge(elem) {
         let name = "edge-" + str(i)
-        let edge = edges.at(name)
+        let edge = get-value(edges.at(name))
         // Function for custom edge
         // https://fletcher-package.github.io/manual/edges.html#custom-edge
         let path-fun = points => {
