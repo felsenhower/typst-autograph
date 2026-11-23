@@ -27,9 +27,7 @@ jobs:
           tag: v0.7.0
 
       - name: Install tinymist
-        env:
-          TINYMIST_VERSION: 0.15.x
-        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Myriad-Dreamin/tinymist/releases/download/${TINYMIST_VERSION}/tinymist-installer.sh | sh
+        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Myriad-Dreamin/tinymist/releases/download/v0.15.12/tinymist-viewer-installer.sh | sh
 
       - name: Install just
         uses: extractions/setup-just@v4
