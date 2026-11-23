@@ -26,13 +26,21 @@ jobs:
           git: https://github.com/typst/package-check
           tag: v0.7.0
 
+      - name: Install tinymist
+        env:
+          TINYMIST_VERSION: 0.15.x
+        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Myriad-Dreamin/tinymist/releases/download/${TINYMIST_VERSION}/tinymist-installer.sh | sh
+
       - name: Install just
         uses: extractions/setup-just@v4
         with:
           just-version: '1.59.0'
 
-      - name: Run test suite
+      - name: Run tests (tytanic)
         run: tt run
+
+      - name: Run tests (tinymist)
+        run: tinymist test lib.typ
 
       - name: Run package-check
         run: |
@@ -40,13 +48,13 @@ jobs:
           just _package
           cd autograph && typst-package-check check
 
-      - name: Archive artifacts
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: artifacts
-          path: |
-            tests/**/diff/*.png
-            tests/**/out/*.png
-            tests/**/ref/*.png
-          retention-days: 5
+      # - name: Archive artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: always()
+      #   with:
+      #     name: artifacts
+      #     path: |
+      #       tests/**/diff/*.png
+      #       tests/**/out/*.png
+      #       tests/**/ref/*.png
+      #     retention-days: 5
