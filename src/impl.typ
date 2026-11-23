@@ -43,7 +43,9 @@
 // we get: 
 // ((p0, p1, p2, p3), (p3, p4, p5, p6), (p6, p7, p8, p9))
 #let bezier-segments(points) = {
-  assert(calc.rem(points.len() - 1, 3) == 0)
+  if (calc.rem(points.len() - 1, 3) != 0) {
+    panic("Length of input must follow formula \"(len - 1) % 3 == 0\".")
+  }
   let segments = ()
   let i = 0
   while i + 3 < points.len() {
@@ -51,6 +53,16 @@
     i += 3
   }
   segments
+}
+
+#let test-bezier-segments() = {
+  let points = ((0,0),(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9))
+  let expected-result = (((0,0),(1,1),(2,2),(3,3)),((3,3),(4,4),(5,5),(6,6)),((6,6),(7,7),(8,8),(9,9)))
+  assert(bezier-segments(points) == expected-result)
+}
+
+#let panic-on-bezier-incorrect-length() = {
+  bezier-segments(((0,0),(1,1),(2,2)))
 }
 
 #let replace-bounds(points, new-start, new-end) = {
