@@ -15,17 +15,19 @@
     }
 }
 
-#let check-edges(elements, nodes) = {
+#let check-edges(elements) = {
     testyfy.typeof(elements, array)
-    testyfy.typeof(nodes, dictionary)
+    let node-names = elements.filter(is-autograph-node).map(
+        e => str(get-value(e).name)
+    )
     for elem in elements.filter(is-autograph-edge) {
         let edge = get-value(elem)
         let tail = str(edge.tail)
-        if not nodes.keys().contains(tail) {
+        if not node-names.contains(tail) {
           panic("Node with name \"" + tail + "\" has not been defined.")
         }
         let head = str(edge.head)
-        if not nodes.keys().contains(head) {
+        if not node-names.contains(head) {
           panic("Node with name \"" + head + "\" has not been defined.")
         }
     }

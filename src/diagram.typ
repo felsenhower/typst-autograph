@@ -38,9 +38,9 @@
   }
   let elements = args.pos().flatten()
   check-nodes(elements)
+  check-edges(elements)
   context {
     let nodes = get-node-measurements(elements, diagram-args)
-    check-edges(elements, nodes)
     let edges = get-edge-names(elements)
     let (nodes, edges) = {
       if nodes.len() > 0 {
