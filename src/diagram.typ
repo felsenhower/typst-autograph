@@ -4,6 +4,7 @@
 #import "./edge.typ": is-autograph-edge
 #import "./paths.typ": replace-bounds, bezier-segments
 #import "./point.typ": subtract-points, point-to-array
+#import "./layout.typ": get-node-measurements, check-nodes, check-edges, get-edge-names
 
 #let diagram(
   engine: "dot",
@@ -23,43 +24,12 @@
     }
   }
   let elements = args.pos().flatten()
-  let (nodes, edges) = {
-    let nodes = (:)
-    let edges = (:)
-    for (i, elem) in elements.enumerate() {
-      if is-autograph-node(elem) {
-        let node = get-value(elem)
-        let name = str(node.name)
-        if nodes.keys().contains(name) {
-          panic("Duplicate node \"" + name + "\".")
-        }
-        let measurements = measure(
-          fletcher.diagram(
-            ..diagram-args,
-            fletcher.node(
-              (0,0), // Let's hope that this keeps people from manually supplying a position in the node args
-              ..node.args,
-              node.body
-            )
-          )
-        )
-        nodes.insert(name, extend-element(elem, (measurements: measurements)))
-      } else if is-autograph-edge(elem) {
-        let edge = get-value(elem)
-        let tail = str(edge.tail)
-        if not nodes.keys().contains(tail) {
-          panic("Node with name \"" + tail + "\" has not been defined.")
-        }
-        let head = str(edge.head)
-        if not nodes.keys().contains(head) {
-          panic("Node with name \"" + head + "\" has not been defined.")
-        }
 
-        edges.insert("edge-" + str(i), elem)
-      }
-    }
-    (nodes, edges)
-  }
+  check-nodes(elements)
+  let nodes = get-node-measurements(elements, diagram-args)
+  check-edges(elements, nodes)
+  let edges = get-edge-names(elements)
+
   let (nodes, edges) = {
     if nodes.len() > 0 {
       let layout = diagraph-layout.layout-graph(
