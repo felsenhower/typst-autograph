@@ -1,11 +1,10 @@
-#let template(body) = {
-
-  set page(
+#set page(
     width: auto,
     height: auto,
     margin: 1em,
     fill: white,
-  )
+)
 
-  body
-}
+#import "/lib.typ": diagram, node, edge
+
+// TODO: Insert test here.
