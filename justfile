@@ -43,6 +43,13 @@ package: build-deps
 
 test:
     tt run
+    tinymist test lib.typ
 
 package-check: package
     cd autograph && typst-package-check check
+
+lint:
+    tinymist lint lib.typ
+
+check: test lint package-check
+    @echo All done!
