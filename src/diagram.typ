@@ -6,10 +6,23 @@
 #import "./point.typ": subtract-points, point-to-array
 #import "./layout.typ": get-node-measurements, check-nodes, check-edges, get-edge-names
 
+#let allowed-engines = (
+  "circo",
+  "dot",
+  "fdp",
+  "neato",
+  "osage",
+  "sfdp",
+  "twopi"
+)
+
 #let diagram(
   engine: "dot",
   ..args,
 ) = context {
+  if not allowed-engines.contains(engine) {
+    panic("Engine \"" + engine + "\" is not allowed. Allowed engines are " + repr(allowed-engines))
+  }
   let default-args = (
     node-shape: "ellipse",
     node-stroke: 1pt + black,
