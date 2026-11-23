@@ -40,6 +40,9 @@ jobs:
       - name: Run tests (tinymist)
         run: tinymist test lib.typ
 
+      - name: Run lint (tinymist)
+        run: tinymist lint lib.typ
+
       - name: Run package-check
         run: |
           make -C src/diagraph-layout module
