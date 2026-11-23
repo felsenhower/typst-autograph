@@ -3,13 +3,7 @@
 #import "./node.typ": node, is-autograph-node
 #import "./edge.typ": edge, is-autograph-edge
 #import "./paths.typ": replace-bounds, bezier-segments
-
-#let subtract-points(p1, p2) = {
-  (
-    x: p1.x - p2.x,
-    y: p1.y - p2.y,
-  )
-}
+#import "./point.typ": subtract-points, point-to-array
 
 #let diagram(
   engine: "dot",
@@ -144,7 +138,7 @@
         let name = str(get-value(elem).name)
         let node = get-value(nodes.at(name))
         fletcher.node(
-          (node.position.x, node.position.y),
+          point-to-array(node.position),
           name: name,
           ..node.args,
           node.body
@@ -162,7 +156,7 @@
             }
           })
         }
-        let points = edge.points.map(p => (p.x, p.y))
+        let points = edge.points.map(point-to-array)
         // Replace the tail and head with the fletcher nodes.
         // In most cases, this won't make a noticable difference.
         // In rare cases, this makes for a nicer layout.
