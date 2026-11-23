@@ -128,6 +128,15 @@ To draw a graph with autograph, we perform the following steps:
 
 ## Changelog
 
+### 0.1.3
+
+- Implement strong ordering guarantees: The order of all elements inside a `diagram` is completely preserved, including fletcher elements.
+- Re-export dependencies (`fletcher`, `diagraph-layout`, ...)
+- Refactor:
+  - Restructure source files
+  - Add tests and linting (`tytanic`, `tinymist`, `typst-package-check`)
+  - Add CI
+
 ### 0.1.2
 
 - Use fletcher v0.6.0.
