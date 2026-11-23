@@ -5,6 +5,6 @@
     fill: white,
 )
 
-#import "/lib.typ": diagram, node, edge
+#import "/lib.typ" as autograph: diagram, node, edge
 
 // TODO: Insert test here.
