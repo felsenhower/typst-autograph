@@ -39,9 +39,9 @@
   let elements = args.pos().flatten()
   check-nodes(elements)
   check-edges(elements)
+  let edges = get-edge-names(elements)
   context {
     let nodes = get-node-measurements(elements, diagram-args)
-    let edges = get-edge-names(elements)
     let (nodes, edges) = {
       if nodes.len() > 0 {
         let layout = diagraph-layout.layout-graph(
