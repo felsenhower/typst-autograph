@@ -1,7 +1,12 @@
 #import "./src/impl.typ": (
-  diagram,
-  node,
-  edge,
-  fletcher,
-  diagraph-layout
+    diagram,
+    node,
+    edge,
+)
+
+#import "./src/dependencies.typ": (
+    fletcher,
+    cetz,
+    diagraph-layout,
+    testyfy
 )

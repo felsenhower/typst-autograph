@@ -34,7 +34,7 @@ _package:
     cp -r examples autograph/
     cp -r logo autograph/
     mkdir autograph/src
-    cp src/impl.typ autograph/src/
+    for f in src/*.typ ; do cp "$f" autograph/src/ ; done
     cp -r src/diagraph-layout/diagraph-layout autograph/src/
 
 package: build-deps

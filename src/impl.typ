@@ -1,39 +1,7 @@
-#import "@preview/fletcher:0.6.0" as fletcher
-#import "./diagraph-layout/lib.typ" as diagraph-layout
-#import fletcher: cetz
-
-
-#let node(name, ..args) = {
-  assert(args.pos().len() <= 1)
-  let body = {
-    let pos = args.pos()
-    if pos.len() == 0 {
-      str(name)
-    } else {
-      let body = pos.at(0)
-      if body == none {
-        body = box(width: 0.85em, height: 0.85em)
-      }
-      body
-    }
-  }
-  metadata((
-    class: "autograph-node",
-    name: name,
-    body: body,
-    args: args.named(),
-  ))
-}
-
-#let edge(tail, head, ..args) = {
-  assert(args.pos().len() == 0)
-  metadata((
-    class: "autograph-edge",
-    tail: tail,
-    head: head,
-    args: args.named(),
-  ))
-}
+#import "./dependencies.typ": fletcher, cetz, diagraph-layout
+#import "./elements.typ": get-value
+#import "./node.typ": node, is-autograph-node
+#import "./edge.typ": edge, is-autograph-edge
 
 // This function transforms a list of Bézier control points to a list of Bézier segments.
 // A single Bézier segment has 4 control points: the start, two points that determine the curvature, and the end.
@@ -70,36 +38,6 @@
   (new-start, ..points.slice(1, -1), new-end)
 }
 
-#let is-autograph-elem(e) = {
-  if type(e) != content {
-    return false
-  }
-  let fields = e.fields()
-  let value = fields.at("value", default: none)
-  if type(value) != dictionary {
-    return false
-  }
-  let class = value.at("class", default: none)
-  if type(class) != str {
-    return false
-  }
-  return class.starts-with("autograph-")
-}
-
-#let is-autograph-node(e) = {
-  if not is-autograph-elem(e) {
-    return false
-  }
-  return e.value.class == "autograph-node"
-}
-
-#let is-autograph-edge(e) = {
-  if not is-autograph-elem(e) {
-    return false
-  }
-  return e.value.class == "autograph-edge"
-}
-
 #let subtract-points(p1, p2) = {
   (
     x: p1.x - p2.x,
@@ -130,7 +68,7 @@
     let edges = (:)
     for (i, elem) in elements.enumerate() {
       if is-autograph-node(elem) {
-        let node = elem.value
+        let node = get-value(elem)
         let name = str(node.name)
         if nodes.keys().contains(name) {
           panic("Duplicate node \"" + name + "\".")
@@ -152,7 +90,7 @@
           measurements: measurements,
         ))
       } else if is-autograph-edge(elem) {
-        let edge = elem.value
+        let edge = get-value(elem)
         let tail = str(edge.tail)
         if not nodes.keys().contains(tail) {
           panic("Node with name \"" + tail + "\" has not been defined.")
@@ -247,7 +185,7 @@
   let rendered-elements = elements.enumerate().map(
     ((i, elem)) => {
       if is-autograph-node(elem) {
-        let name = str(elem.value.name)
+        let name = str(get-value(elem).name)
         let node = nodes.at(name)
         fletcher.node(
           (node.position.x, node.position.y),
