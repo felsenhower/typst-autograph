@@ -122,9 +122,14 @@ To draw a graph with autograph, we perform the following steps:
     - Create a dummy fletcher diagram containing a single fletcher node. This is necessary, because node dimensions are influenced by arguments like `node-inset`.
     - Measure the size of the diagram using [`measure`](https://typst.app/docs/reference/layout/measure/)
 2. We acquire the layout using diagraph-layout's `layout-graph` function. Here, we pass the `width` and `height` of each node we measured before.
-3. We guarantee that the order of the nodes and edges will be preserved and that the first node that was supplied will be positioned at `(0pt, 0pt)`. Since diagraph-layout makes no such guarantees, we need to reorder the nodes and edges and shift all points.
-4. We draw the nodes as fletcher nodes at the exact positions we acquired before.
-5. We draw the edges. We do this by using `fletcher`'s new `custom` edge kinds in combination with `cetz.draw.bezier`.
+3. We make the following guarantees:
+    - The order of all elements inside the diagram is exactly preserved. This includes both nodes *and* edges (both the autograph variants *and* their fletcher counterparts).
+    - The first autograph node in the diagram will be positioned at `(0pt, 0pt)`.
+   Since diagraph-layout makes no such guarantees, we reorder the nodes and shift all points.
+4. We draw the elements as follows:
+    - We draw nodes as fletcher nodes using the positions and measurements we acquired before.
+    - We draw edges as fletcher edges via fletcher's new `custom` edge kind in combination with `cetz.draw.bezier` (Graphviz defines edges as Bézier paths).
+    - We pass through all other elements (e.g. fletcher elements) unchanged.
 
 ## Changelog
 
