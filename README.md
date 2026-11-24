@@ -9,7 +9,7 @@ A [Typst](https://typst.app/) package for drawing graphs with automatic layout, 
 ![A Simple Example](examples/1-simple-bezier.svg)
 
 ```typ
-#import "@preview/autograph:0.1.2": diagram, node, edge
+#import "@preview/autograph:0.1.3": diagram, node, edge
 #diagram(
   node(<foo>),
   node(<bar>),
@@ -48,7 +48,7 @@ autograph also supports flexibly styling your graph with fletcher. The example b
 ![Styling Example](examples/3-styling.svg)
 
 ```typ
-#import "@preview/autograph:0.1.2": diagram, node, edge
+#import "@preview/autograph:0.1.3": diagram, node, edge
 #diagram(
   node-shape: "rect",
   node-fill: red.lighten(75%),
@@ -69,7 +69,7 @@ Since autograph's diagram works as a drop-in replacement for fletcher's diagram,
 ![Example with Fletcher](examples/4-mix-with-fletcher.svg)
 
 ```typ
-#import "@preview/autograph:0.1.2" as autograph: diagram, fletcher
+#import "@preview/autograph:0.1.3" as autograph: diagram, fletcher
 #diagram(
   engine: "circo",
   node-fill: white,

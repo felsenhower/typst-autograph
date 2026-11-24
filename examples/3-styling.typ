@@ -1,7 +1,7 @@
 #import "template.typ": template
 #show: template
 
-#import "@local/autograph:0.1.2": diagram, node, edge
+#import "@local/autograph:0.1.3": diagram, node, edge
 #diagram(
   node-shape: "rect",
   node-fill: red.lighten(75%),
