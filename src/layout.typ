@@ -119,8 +119,9 @@
         }
     ).to-dict()
     // We guarantee that the first node that was defined will be at position (0,0).
-    // To do so, we offset all positions by the first position.
-    let position-offset = node-positions.values().at(0)
+    // To do so, we offset all positions by the position of the first node that was defined.
+    let first-node-name = nodes.keys().at(0)
+    let position-offset = node-positions.at(first-node-name)
     let node-positions = node-positions.pairs().map(
         ((name, pos)) => (name, subtract-points(pos, position-offset))
     ).to-dict()
