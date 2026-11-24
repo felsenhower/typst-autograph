@@ -1,5 +1,3 @@
-#import "./dependencies.typ": testyfy
-
 #let is-point(p) = {
     if type(p) != dictionary {
         return false

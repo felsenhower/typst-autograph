@@ -1,11 +1,12 @@
-#import "./dependencies.typ": testyfy, fletcher, diagraph-layout
+#import "./dependencies.typ": fletcher, diagraph-layout
 #import "./node.typ": is-autograph-node
 #import "./edge.typ": is-autograph-edge
 #import "./elements.typ": get-value, extend-element
 #import "./point.typ": subtract-points
+#import "./util.typ": check-is-of-type
 
 #let check-nodes(elements) = {
-    testyfy.typeof(elements, array)
+    check-is-of-type(elements, array)
     let names = ()
     for elem in elements.filter(is-autograph-node) {
         let name = str(get-value(elem).name)
@@ -17,7 +18,7 @@
 }
 
 #let check-edges(elements) = {
-    testyfy.typeof(elements, array)
+    check-is-of-type(elements, array)
     let node-names = elements.filter(is-autograph-node).map(
         e => str(get-value(e).name)
     )
@@ -35,7 +36,7 @@
 }
 
 #let make-node-measurements(elements, diagram-args) = {
-    testyfy.typeof(elements, array)
+    check-is-of-type(elements, array)
     elements.map(
         elem => {
             if is-autograph-node(elem) {

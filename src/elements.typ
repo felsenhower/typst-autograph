@@ -1,8 +1,8 @@
-#import "./dependencies.typ": testyfy
+#import "./util.typ": check-is-of-type
 
 #let autograph-element(class, value) = {
-    testyfy.typeof(class, str)
-    testyfy.typeof(value, dictionary)
+    check-is-of-type(class, str)
+    check-is-of-type(value, dictionary)
     let class = "autograph-" + class
     metadata((
         class: class,
@@ -38,7 +38,7 @@
 
 #let extend-element(e, added-value) = {
     assert(is-autograph-element(e))
-    testyfy.typeof(added-value, dictionary)
+    check-is-of-type(added-value, dictionary)
     let class = get-class(e)
     let old-value = get-value(e)
     let new-value = old-value + added-value

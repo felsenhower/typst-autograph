@@ -1,6 +1,5 @@
 #import "./elements.typ": autograph-element, is-autograph-element, get-class
-#import "dependencies.typ": testyfy
-
+#import "./util.typ": check-is-of-type, check-is-of-type-or-auto
 
 #let get-body-from-args(args, name) = {
     let pos = args.pos()
@@ -41,26 +40,23 @@
     snap: true,
     debug: auto,
 ) = {
-    testyfy.type-one-of(name, (label, str))
+    check-is-of-type(name, (label, str))
     if args.pos().len() > 1 {
         panic("only one body can be passed.")
     } else if args.pos().len() == 1 {
-        testyfy.type-one-of(args.pos().at(0), (content, str, int, type(none), type(auto)))
+        check-is-of-type(args.pos().at(0), (content, str, int, type(none), type(auto)))
     }
     if args.named().len() > 0 {
         panic("named arguments are not supported.")
     }
-    let type-auto-or-one-of(val, types) = {
-        testyfy.type-one-of(val, (type(auto), ..types))
-    }
-    type-auto-or-one-of(shape, (type(none), str))
-    type-auto-or-one-of(inset, (length, array, dictionary))
-    type-auto-or-one-of(outset, (length, array, dictionary))
-    type-auto-or-one-of(extrude, (array,))
-    testyfy.typeof(layer, int)
-    testyfy.typeof(align, alignment)
-    testyfy.typeof(snap, bool)
-    type-auto-or-one-of(debug, (bool,))
+    check-is-of-type-or-auto(shape, (type(none), str))
+    check-is-of-type-or-auto(inset, (length, array, dictionary))
+    check-is-of-type-or-auto(outset, (length, array, dictionary))
+    check-is-of-type-or-auto(extrude, (array,))
+    check-is-of-type(layer, int)
+    check-is-of-type(align, alignment)
+    check-is-of-type(snap, bool)
+    check-is-of-type-or-auto(debug, (bool,))
     let body = get-body-from-args(args, name)
     let fletcher-args = (
         shape: shape,
