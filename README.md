@@ -125,6 +125,7 @@ To draw a graph with autograph, we perform the following steps:
 3. We make the following guarantees:
     - The order of all elements inside the diagram is exactly preserved. This includes both nodes *and* edges (both the autograph variants *and* their fletcher counterparts).
     - The first autograph node in the diagram will be positioned at `(0pt, 0pt)`.
+   
    Since diagraph-layout makes no such guarantees, we reorder the nodes and shift all points.
 4. We draw the elements as follows:
     - We draw nodes as fletcher nodes using the positions and measurements we acquired before.
