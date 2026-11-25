@@ -8,7 +8,7 @@
 #import "/lib.typ" as autograph: diagram, node, edge
 
 #diagram(
-    engine: "osage",
+    graph-options: (engine: "osage",),
     node(<a>),
     node(<b>),
     node(<c>),

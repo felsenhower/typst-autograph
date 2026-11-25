@@ -66,9 +66,18 @@
 
 #let diagram(
     axes: (ltr, ttb),
-    engine: "dot",
+    graph-options: auto,
     ..args,
 ) = {
+    let graph-options = if graph-options == auto {
+        (engine: "dot",)
+    } else {
+        graph-options
+    }
+    if type(graph-options) != dictionary {
+        panic("Graph options must be auto or a dictionary.")
+    }
+    let engine = graph-options.at("engine", default: "dot")
     if not allowed-engines.contains(engine) {
         panic("Engine \"" + engine + "\" is not allowed. Allowed engines are " + repr(allowed-engines))
     }
@@ -90,7 +99,7 @@
     check-edges(elements)
     context {
         let elements = make-node-measurements(elements, diagram-args)
-        let elements = make-layout(elements, engine)
+        let elements = make-layout(elements, graph-options)
         let rendered-elements = render-elements(elements)
         fletcher.diagram(
             axes: axes,
@@ -101,5 +110,5 @@
 }
 
 #let panic-on-illegal-engine() = {
-    diagram(engine: "nop")
+    diagram(graph-options: (engine: "nop",))
 }

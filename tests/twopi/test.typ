@@ -8,7 +8,7 @@
 #import "/lib.typ" as autograph: diagram, node, edge
 
 #diagram(
-    engine: "twopi",
+    graph-options: (engine: "twopi",),
     node(<a>),
     node(<b>),
     node(<c>),

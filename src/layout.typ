@@ -59,7 +59,7 @@
     )
 }
 
-#let make-layout(elements, engine) = {
+#let make-layout(elements, graph-options) = {
     let generic-element-name(index) = "elem-" + str(index)
     let edge-name(index) = "edge-" + str(index)
     let named-elements = elements.enumerate().map(
@@ -84,8 +84,8 @@
         ((name, elem)) => is-autograph-edge(elem)
     ).to-dict()
     let layout = diagraph-layout.layout-graph(
-        engine: engine,
         directed: true,
+        ..graph-options,
         ..nodes.pairs().map(
             ((name, elem)) => {
                 let node = get-value(elem)

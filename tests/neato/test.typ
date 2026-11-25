@@ -8,7 +8,7 @@
 #import "/lib.typ" as autograph: diagram, node, edge
 
 #diagram(
-    engine: "neato",
+    graph-options: (engine: "neato",),
     node(<a>),
     node(<b>),
     node(<c>),

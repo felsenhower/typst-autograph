@@ -8,7 +8,7 @@
 #import "/lib.typ" as autograph: diagram, node, edge
 
 #diagram(
-    engine: "fdp",
+    graph-options: (engine: "fdp",),
     node(<a>),
     node(<b>),
     node(<c>),

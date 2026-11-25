@@ -3,7 +3,7 @@
 
 #import "@local/autograph:0.1.3" as autograph: diagram, fletcher
 #diagram(
-  engine: "circo",
+  graph-options: (engine: "circo",),
   node-fill: white,
   {
     import autograph: node, edge

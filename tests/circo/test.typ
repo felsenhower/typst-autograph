@@ -8,7 +8,7 @@
 #import "/lib.typ" as autograph: diagram, node, edge
 
 #diagram(
-    engine: "circo",
+    graph-options: (engine: "circo",),
     node(<a>),
     node(<b>),
     node(<c>),
