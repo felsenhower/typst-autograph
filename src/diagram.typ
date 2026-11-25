@@ -52,6 +52,8 @@
                 fletcher.edge(
                     ..points,
                     marks: "-solid",
+                    snap-to: (edge.tail, edge.head),
+                    snap-method: "trim",
                     ..edge.args,
                     path: path-fun
                 )

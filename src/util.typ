@@ -18,3 +18,36 @@
 #let check-is-of-type-or-auto(value, type-or-types) = {
     check-is-of-type(value, (type(auto), type-or-types).flatten())
 }
+
+#let stroke-like-types = (
+    type(none),
+    length,
+    color,
+    gradient,
+    stroke,
+    tiling,
+    dictionary,
+)
+
+#let fill-like-types = (
+    type(none),
+    color,
+    gradient,
+    tiling,
+)
+
+#let shape-like-types = (
+    type(none),
+    str,
+)
+
+#let name-like-types = (
+    str,
+    label,
+)
+
+#let padding-like-types = (
+    length,
+    array,
+    dictionary,
+)
