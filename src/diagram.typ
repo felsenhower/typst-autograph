@@ -65,6 +65,7 @@
 }
 
 #let diagram(
+    axes: (ltr, ttb),
     engine: "dot",
     ..args,
 ) = {
@@ -92,6 +93,7 @@
         let elements = make-layout(elements, engine)
         let rendered-elements = render-elements(elements)
         fletcher.diagram(
+            axes: axes,
             ..diagram-args,
             rendered-elements
         )
