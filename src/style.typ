@@ -7,13 +7,14 @@
 // e.g. `node-shape`, `edge-stroke`, `edge-mark-scale`.
 // Fletcher's `mark-scale` is accepted as an alias of `edge-mark-scale`.
 
+#let default-mark = (inherit: "solid", size: 12.5)
+
 #let graph-default-style = (
     node-shape: "ellipse",
     node-stroke: 1pt + black,
     node-inset: 1.5em,
     edge-stroke: 1pt,
-    edge-mark-scale: 125%,
-    edge-marks: "-solid"
+    edge-marks: (none, default-mark),
 )
 
 #let graph-default-layout-options = (

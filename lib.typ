@@ -2,6 +2,7 @@
     diagram,
     node,
     edge,
+    default-mark,
 )
 
 #import "./src/dependencies.typ": (
