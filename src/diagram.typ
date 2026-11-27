@@ -74,19 +74,15 @@
     graph-options: auto,
     ..args,
 ) = {
-    let graph-options = if graph-options == auto {
-        (engine: "dot",)
-    } else {
-        graph-options
-    }
+    let graph-options = if graph-options == auto { (:) } else { graph-options }
     if type(graph-options) != dictionary {
         panic("Graph options must be auto or a dictionary.")
     }
-    let engine = graph-options.at("engine", default: "dot")
+    let (style: graph-style, layout: layout-options) = split-graph-options(graph-options)
+    let engine = layout-options.engine
     if not allowed-engines.contains(engine) {
         panic("Engine \"" + engine + "\" is not allowed. Allowed engines are " + repr(allowed-engines))
     }
-    let (style: graph-style, layout: layout-options) = split-graph-options(graph-options)
     let diagram-args = args.named()
     let graph-style = make-graph-style(diagram-args, graph-style)
     let elements = args.pos().flatten()

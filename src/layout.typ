@@ -85,7 +85,7 @@
     ).to-dict()
     let layout = diagraph-layout.layout-graph(
         directed: true,
-        ..layout-options,
+        engine: layout-options.engine,
         ..nodes.pairs().map(
             ((name, elem)) => {
                 let node = get-value(elem)

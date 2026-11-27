@@ -16,6 +16,10 @@
     edge-marks: "-solid"
 )
 
+#let graph-default-layout-options = (
+    engine: "dot",
+)
+
 #let is-node-style-key(key) = key.starts-with("node-")
 
 #let is-edge-style-key(key) = key.starts-with("edge-") or key == "mark-scale"
@@ -32,7 +36,7 @@
     normalized
 }
 
-/// Split graph options into style options and the remaining layout options.
+/// Split graph options into style options and the remaining layout options (with defaults).
 #let split-graph-options(graph-options) = {
     let style = (:)
     let layout = (:)
@@ -43,7 +47,7 @@
             layout.insert(k, v)
         }
     }
-    (style: style, layout: layout)
+    (style: style, layout: graph-default-layout-options + layout)
 }
 
 /// Style that applies to all elements of the graph, ignoring per-element args.
