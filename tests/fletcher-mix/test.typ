@@ -7,9 +7,6 @@
 
 #import "/lib.typ" as autograph: diagram, fletcher
 
-// This test is currently slightly broken because of a fletcher bug.
-// It will likely be fixed with fletcher v0.6.1.
-
 #diagram(
     node-fill: white,
     autograph.node(<foo>),
@@ -21,12 +18,14 @@
         shape: "rect",
     ),
     fletcher.node(
-        (rel: (45deg, 10mm), to: <foo>),
+        (rel: (2em, 0em), to: <foo.east>),
         stroke: 1pt + red.darken(50%),
         fill: red,
-        width: 10mm,
-        height: 10mm,
         shape: "chevron",
+        angle: 45deg,
+        inset: 1em,
+        dir: left,
+        [#text(fill: yellow, font: "DejaVu Sans Mono")[Wow!]]
     ),
     autograph.edge(<foo>, <bar>),
 )

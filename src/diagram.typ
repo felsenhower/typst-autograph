@@ -5,6 +5,12 @@
 #import "./paths.typ": replace-bounds, bezier-segments
 #import "./point.typ": point-to-array
 #import "./layout.typ": check-nodes, check-edges, make-node-measurements, make-layout
+#import "./style.typ": (
+    split-graph-options,
+    make-graph-style,
+    effective-node-args,
+    effective-edge-args,
+)
 
 #let allowed-engines = (
     "circo",
@@ -16,7 +22,7 @@
     "twopi"
 )
 
-#let render-elements(elements) = {
+#let render-elements(elements, graph-style) = {
     elements.map(
         elem => {
             if is-autograph-node(elem) {
@@ -25,7 +31,7 @@
                 fletcher.node(
                     point-to-array(node.position),
                     name: name,
-                    ..node.args,
+                    ..effective-node-args(node, graph-style),
                     node.body
                 )
             } else if is-autograph-edge(elem) {
@@ -54,7 +60,7 @@
                     marks: "-solid", // Note: There is currently no edge-marks in fletcher. There should though :)
                     snap-to: (edge.tail, edge.head),
                     snap-method: "trim",
-                    ..edge.args,
+                    ..effective-edge-args(edge, graph-style),
                     path: path-fun
                 )
             } else {
@@ -81,26 +87,16 @@
     if not allowed-engines.contains(engine) {
         panic("Engine \"" + engine + "\" is not allowed. Allowed engines are " + repr(allowed-engines))
     }
-    let default-args = (
-        node-shape: "ellipse",
-        node-stroke: 1pt + black,
-        edge-stroke: 1pt,
-        mark-scale: 125%,
-        node-inset: 1.5em,
-    )
+    let (style: graph-style, layout: layout-options) = split-graph-options(graph-options)
     let diagram-args = args.named()
-    for (k, v) in default-args.pairs() {
-        if not diagram-args.keys().contains(k) {
-            diagram-args.insert(k, v)
-        }
-    }
+    let graph-style = make-graph-style(diagram-args, graph-style)
     let elements = args.pos().flatten()
     check-nodes(elements)
     check-edges(elements)
     context {
-        let elements = make-node-measurements(elements, diagram-args)
-        let elements = make-layout(elements, graph-options)
-        let rendered-elements = render-elements(elements)
+        let elements = make-node-measurements(elements, graph-style)
+        let elements = make-layout(elements, layout-options)
+        let rendered-elements = render-elements(elements, graph-style)
         fletcher.diagram(
             axes: axes,
             ..diagram-args,

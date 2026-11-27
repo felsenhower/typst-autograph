@@ -4,6 +4,7 @@
 #import "./elements.typ": get-value, extend-element
 #import "./point.typ": subtract-points
 #import "./util.typ": check-is-of-type
+#import "./style.typ": effective-node-args
 
 #let check-nodes(elements) = {
     check-is-of-type(elements, array)
@@ -35,7 +36,7 @@
     }
 }
 
-#let make-node-measurements(elements, diagram-args) = {
+#let make-node-measurements(elements, graph-style) = {
     check-is-of-type(elements, array)
     elements.map(
         elem => {
@@ -43,10 +44,9 @@
                 let node = get-value(elem)
                 let measurements = measure(
                     fletcher.diagram(
-                        ..diagram-args,
                         fletcher.node(
                             (0,0), // Let's hope that this keeps people from manually supplying a position in the node args
-                            ..node.args,
+                            ..effective-node-args(node, graph-style),
                             node.body
                         )
                     )
@@ -59,7 +59,7 @@
     )
 }
 
-#let make-layout(elements, graph-options) = {
+#let make-layout(elements, layout-options) = {
     let generic-element-name(index) = "elem-" + str(index)
     let edge-name(index) = "edge-" + str(index)
     let named-elements = elements.enumerate().map(
@@ -85,7 +85,7 @@
     ).to-dict()
     let layout = diagraph-layout.layout-graph(
         directed: true,
-        ..graph-options,
+        ..layout-options,
         ..nodes.pairs().map(
             ((name, elem)) => {
                 let node = get-value(elem)
