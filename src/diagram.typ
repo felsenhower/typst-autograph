@@ -57,7 +57,6 @@
                 )
                 fletcher.edge(
                     ..points,
-                    marks: "-solid", // Note: There is currently no edge-marks in fletcher. There should though :)
                     snap-to: (edge.tail, edge.head),
                     snap-method: "trim",
                     ..effective-edge-args(edge, graph-style),

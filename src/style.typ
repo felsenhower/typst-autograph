@@ -4,14 +4,16 @@
 //   graph-default-style < diagram args < graph-options < element args
 //
 // Styles are stored in the format of the fletcher diagram arguments,
-// e.g. `node-shape`, `edge-stroke`, `mark-scale`.
+// e.g. `node-shape`, `edge-stroke`, `edge-mark-scale`.
+// Fletcher's `mark-scale` is accepted as an alias of `edge-mark-scale`.
 
 #let graph-default-style = (
     node-shape: "ellipse",
     node-stroke: 1pt + black,
     node-inset: 1.5em,
     edge-stroke: 1pt,
-    mark-scale: 125%,
+    edge-mark-scale: 125%,
+    edge-marks: "-solid"
 )
 
 #let is-node-style-key(key) = key.starts-with("node-")
@@ -20,13 +22,23 @@
 
 #let is-style-key(key) = is-node-style-key(key) or is-edge-style-key(key)
 
+#let normalize-style-key(key) = if key == "mark-scale" { "edge-mark-scale" } else { key }
+
+#let normalize-style(style) = {
+    let normalized = (:)
+    for (k, v) in style {
+        normalized.insert(normalize-style-key(k), v)
+    }
+    normalized
+}
+
 /// Split graph options into style options and the remaining layout options.
 #let split-graph-options(graph-options) = {
     let style = (:)
     let layout = (:)
     for (k, v) in graph-options {
         if is-style-key(k) {
-            style.insert(k, v)
+            style.insert(normalize-style-key(k), v)
         } else {
             layout.insert(k, v)
         }
@@ -36,7 +48,9 @@
 
 /// Style that applies to all elements of the graph, ignoring per-element args.
 #let make-graph-style(diagram-args, graph-style) = {
-    let diagram-style = diagram-args.pairs().filter(((k, v)) => is-style-key(k)).to-dict()
+    let diagram-style = normalize-style(
+        diagram-args.pairs().filter(((k, v)) => is-style-key(k)).to-dict()
+    )
     graph-default-style + diagram-style + graph-style
 }
 
@@ -80,9 +94,7 @@
 #let effective-edge-args(edge, graph-style) = {
     let inherited = (:)
     for (k, v) in graph-style {
-        if k == "mark-scale" {
-            inherited.insert(k, v)
-        } else if k.starts-with("edge-") {
+        if k.starts-with("edge-") {
             inherited.insert(k.slice("edge-".len()), v)
         }
     }
