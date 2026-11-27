@@ -22,7 +22,6 @@ build-deps:
     # - Add `source /etc/profile.d/emscripten.sh` to `.zshrc`
     # - cargo install wasi-stub
     # - cargo install --git https://github.com/Robotechnic/WebAssembly-protocol-generator.git
-    git submodule update --init
     make -C src/diagraph-layout wasm
     make -C src/diagraph-layout module
 
