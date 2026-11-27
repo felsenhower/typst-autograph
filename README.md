@@ -134,6 +134,10 @@ To draw a graph with autograph, we perform the following steps:
 
 ## Changelog
 
+### 0.1.4
+
+- Decouple graph styles from diagram styles: You can now pass something like `graph-options: (node-shape: "rect")` and it will only apply to autograph nodes.
+
 ### 0.1.3
 
 - Implement strong ordering guarantees: The order of all elements inside a `diagram` is completely preserved, including fletcher elements.
