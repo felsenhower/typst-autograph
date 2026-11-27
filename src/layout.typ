@@ -84,7 +84,7 @@
         ((name, elem)) => is-autograph-edge(elem)
     ).to-dict()
     let layout = diagraph-layout.layout-graph(
-        directed: true,
+        directed: false, // Note: the `directed` option does not influence the layout. The actual directedness of the graph is determined elsewhere.
         engine: layout-options.engine,
         ..nodes.pairs().map(
             ((name, elem)) => {
