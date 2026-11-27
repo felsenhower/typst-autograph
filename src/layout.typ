@@ -59,6 +59,15 @@
     )
 }
 
+#let rankdir-from-direction(dir) = {
+    check-is-of-type(dir, direction)
+    if dir == ttb { "TB" }
+    else if dir == btt { "BT" }
+    else if dir == ltr { "LR" }
+    else if dir == rtl { "RL" }
+    else { panic("rankdir must be one of ttb, btt, ltr, or rtl, got " + repr(dir)) }
+}
+
 #let make-layout(elements, layout-options) = {
     let generic-element-name(index) = "elem-" + str(index)
     let edge-name(index) = "edge-" + str(index)
@@ -86,6 +95,7 @@
     let layout = diagraph-layout.layout-graph(
         directed: false, // Note: the `directed` option does not influence the layout. The actual directedness of the graph is determined elsewhere.
         engine: layout-options.engine,
+        diagraph-layout.graph-attribute("GRAPH", "rankdir", rankdir-from-direction(layout-options.rankdir)),
         ..nodes.pairs().map(
             ((name, elem)) => {
                 let node = get-value(elem)

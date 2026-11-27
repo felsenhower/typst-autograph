@@ -19,6 +19,7 @@
 
 #let graph-default-layout-options = (
     engine: "dot",
+    rankdir: ttb,
 )
 
 #let is-node-style-key(key) = key.starts-with("node-")
