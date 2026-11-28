@@ -4,7 +4,7 @@ A [Typst](https://typst.app/) package for drawing graphs with automatic layout, 
 
 ## Documentation
 
-See the [manual](https://github.com/felsenhower/typst-autograph/blob/v0.2.0/docs/manual.pdf) for a guide on styling and mixing with fletcher, and a reference of all functions.
+See the [manual](https://raw.githubusercontent.com/felsenhower/typst-autograph/refs/tags/v0.2.0/docs/manual.pdf) for a guide on styling and mixing with fletcher, and a reference of all functions.
 
 ## Usage Examples
 
