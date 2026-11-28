@@ -8,7 +8,7 @@ See the [manual](https://github.com/felsenhower/typst-autograph/blob/v0.1.3/docs
 
 ## Usage Examples
 
-![A Simple Example](examples/1-simple-bezier.svg)
+![A Simple Example](examples/simple.svg)
 
 ```typ
 #import "@preview/autograph:0.1.3": diagram, node, edge
@@ -22,98 +22,27 @@ See the [manual](https://github.com/felsenhower/typst-autograph/blob/v0.1.3/docs
 )
 ```
 
-autograph's syntax is somewhat of a hybrid between fletcher and dot ([Graphviz](https://graphviz.org/)).
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="examples/styling.svg" alt="A styled graph.">
+      <br>
+      <sub>A styled graph (<a href="examples/styling.typ">source</a>).</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="examples/mix-fletcher.svg" alt="Mixing with Fletcher elements.">
+      <br>
+      <sub>Mixing with Fletcher elements (<a href="examples/mix-fletcher.typ">source</a>).</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="examples/undirected.svg" alt="An undirected graph.">
+      <br>
+      <sub>An undirected graph (<a href="examples/undirected.typ">source</a>).</sub>
+    </td>
+  </tr>
+</table>
 
-In fact, it uses Graphviz's layout engine via [diagraph-layout](https://github.com/felsenhower/diagraph-layout) to determine the concrete node positions and edge paths and uses fletcher to render the layout.
 
-The `autograph.diagram` function is a wrapper around `fletcher.diagram` that works as a drop-in replacement with some additional features.
-
-For comparison's sake, here is same graph written with dot, rendered with [diagraph](https://github.com/Robotechnic/diagraph), a more low-level interface to Graphviz:
-
-![Graphviz Example](examples/2-diagraph.svg)
-
-````typ
-#import "@preview/diagraph:0.3.6": *
-#raw-render(
-  ```dot
-  digraph {
-    foo -> bar
-    foo -> baz
-    baz -> bar
-  }
-  ```
-)
-````
-
-autograph also supports flexibly styling your graph with fletcher. The example below shows how you can customize the look for your nodes and edges. See the fletcher [manual](https://fletcher-package.github.io/manual/intro.html) to find out more about styling.
-
-![Styling Example](examples/3-styling.svg)
-
-```typ
-#import "@preview/autograph:0.1.3": diagram, node, edge
-#diagram(
-  node-shape: "rect",
-  node-fill: red.lighten(75%),
-  node-stroke: 1pt + red,
-  edge-stroke: 1pt + blue,
-  edge-corner-radius: 75pt,
-  node(<foo>, [Foo!]),
-  node(<bar>, [Bar!]),
-  node(<baz>, [Baz!], stroke: yellow, fill: yellow.lighten(75%)),
-  edge(<foo>, <bar>),
-  edge(<foo>, <baz>),
-  edge(<baz>, <bar>, stroke: green),
-)
-```
-
-Since autograph's diagram works as a drop-in replacement for fletcher's diagram, you can also use fletcher nodes and edges and refer to the autograph nodes via their labels. We re-export `fletcher`, so you can use that to make sure that you're using the correct version.
-
-![Example with Fletcher](examples/4-mix-with-fletcher.svg)
-
-```typ
-#import "@preview/autograph:0.1.3" as autograph: diagram, fletcher
-#diagram(
-  graph-options: (engine: "circo",),
-  node-fill: white,
-  {
-    import autograph: node, edge
-    (
-      node(<foo>),
-      node(<bar>),
-      node(<baz>),
-      edge(<foo>, <bar>),
-      edge(<foo>, <baz>),
-      edge(<baz>, <bar>),
-    )
-  },
-  {
-    import fletcher: node, edge
-    (
-      node(
-        enclose: (<foo>, <bar>, <baz>),
-        shape: "rect",
-        stroke: 1pt + blue,
-        inset: 0.5em,
-        fill: blue.lighten(75%),
-        outset: 0.5em,
-        name: <group>,
-      ),
-      node(
-        (rel: (6.5em, 0em), to: <group.east>),
-        stroke: none,
-        fill: none,
-        inset: 0mm,
-        outset: 0.5em,
-        text(red)[Look at this graph!],
-        name: <caption>,
-      ),
-      edge(
-        <caption>, <group>, "->", stroke: red,
-      ) ,       
-    )
-  }
-)
-```
 
 ## Changelog
 
@@ -150,4 +79,5 @@ Since autograph's diagram works as a drop-in replacement for fletcher's diagram,
 
 - It would be nice to add a `graph` function in which we can optionally enclose our nodes and edges. This would allow us to have multiple graphs that are rendered independently from each other. The `graph` function should have an optional parameter `origin` that puts the root node to that location (instead of `(0pt, 0pt)`). This may also come in handy when we're only dealing with one graph.
 - We're currently not supporting edge labels.
+- Since fletcher v0.6.0, fletcher nodes can also directly be placed inside a `cetz.canvas`. Might be an option for us as well.
 - Missing something? Create an [Issue](https://github.com/felsenhower/typst-autograph/issues/new)!

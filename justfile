@@ -13,9 +13,11 @@ install-local: package
     mkdir -p ~/.local/share/typst/packages/local/autograph/
     cp -r autograph ~/.local/share/typst/packages/local/autograph/{{VERSION}}
 
-make-docs:
-    cd examples && for f in [0-9]*.typ ; do printf 'Compiling "%s"...\n' "$f" && typst compile --format svg "$f" ; done
+compile-manual:
     typst compile --root . docs/manual.typ docs/manual.pdf
+
+compile-examples:
+    cd examples && for f in *.typ ; do printf 'Compiling "%s"...\n' "$f" && typst compile --format svg "$f" ; done
 
 build-deps:
     # Prerequisites:
