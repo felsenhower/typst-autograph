@@ -10,6 +10,7 @@ categories = ["visualization", "components"]
 keywords = ["graphviz", "graph", "diagram", "fletcher", "dot"]
 compiler = "0.15.0"
 exclude = [
+  "docs/",
   "examples/",
   "logo/"
 ]
