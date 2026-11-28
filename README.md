@@ -24,51 +24,48 @@ See the [manual](https://github.com/felsenhower/typst-autograph/blob/v0.1.3/docs
 
 <table>
   <tr>
-    <td align="center" width="33%">
+    <td align="center" valign="middle" width="33%">
       <img src="examples/styling.svg" alt="A styled graph.">
       <br>
       <sub>A styled graph (<a href="examples/styling.typ">source</a>).</sub>
     </td>
-    <td align="center" width="33%">
+    <td align="center" valign="middle" colspan="2">
       <img src="examples/mix-fletcher.svg" alt="Mixing with Fletcher elements.">
       <br>
       <sub>Mixing with Fletcher elements (<a href="examples/mix-fletcher.typ">source</a>).</sub>
     </td>
-    <td align="center" width="33%">
-      <img src="examples/undirected.svg" alt="An undirected graph.">
-      <br>
-      <sub>An undirected graph (<a href="examples/undirected.typ">source</a>).</sub>
-    </td>
   </tr>
   <tr>
-    <td align="center" width="33%">
-      <img src="examples/ltr.svg" alt="A left-to-right graph.">
+    <td align="center" valign="middle" colspan="3">
+      <img src="examples/ltr.svg" width="780" alt="A left-to-right graph.">
       <br>
       <sub>Left-to-right layout with <code>rankdir: ltr</code> (<a href="examples/ltr.typ">source</a>).</sub>
     </td>
-    <td align="center" width="33%">
-      <img src="examples/twopi.svg" alt="A radial layout.">
+  </tr>
+  <tr>
+    <td align="center" valign="middle">
+      <img src="examples/twopi.svg" width="260" alt="A radial layout.">
       <br>
       <sub>Radial layout with the <code>twopi</code> engine (<a href="examples/twopi.typ">source</a>).</sub>
     </td>
-    <td align="center" width="33%">
-      <img src="examples/neato.svg" alt="A spring-model layout.">
+    <td align="center" valign="middle">
+      <img src="examples/shapes.svg" width="260" alt="Different node shapes.">
       <br>
-      <sub>Spring-model layout with the <code>neato</code> engine (<a href="examples/neato.typ">source</a>).</sub>
+      <sub>Different node shapes (<a href="examples/shapes.typ">source</a>).</sub>
     </td>
-  </tr>
-  <tr>
-    <td align="center" width="33%">
+    <td align="center" valign="middle">
       <img src="examples/multi-edges.svg" alt="Multiple edges between two nodes.">
       <br>
       <sub>Multiple edges between the same nodes (<a href="examples/multi-edges.typ">source</a>).</sub>
     </td>
-    <td align="center" width="33%">
-      <img src="examples/shapes.svg" alt="Different node shapes.">
+  </tr>
+  <tr>
+    <td align="center" valign="middle">
+      <img src="examples/neato.svg" width="250" alt="A spring-model layout.">
       <br>
-      <sub>Different node shapes (<a href="examples/shapes.typ">source</a>).</sub>
+      <sub>Spring-model layout with the <code>neato</code> engine (<a href="examples/neato.typ">source</a>).</sub>
     </td>
-    <td align="center" width="33%">
+    <td align="center" valign="middle" colspan="2">
       <img src="examples/marks.svg" alt="Different edge marks.">
       <br>
       <sub>Bidirectional edges and custom marks (<a href="examples/marks.typ">source</a>).</sub>
