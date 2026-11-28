@@ -69,6 +69,28 @@
     )
 }
 
+/// Draws a graph with automatic layout. This function is a wrapper around `fletcher.diagram` (which can also be used as a drop-in replacement).
+/// 
+/// To define the graph, use @node and @edge elements within the body of the diagram. They can be freely mixed with fletcher elements (e.g. `fletcher.node` and `fletcher.edge`). See @mixing for details. The autograph elements are laid out by Graphviz and the fletcher elements are passed through unchanged. The order of the elements is preserved, even between autograph and fletcher elements. This determines the drawing order of the elements. The node labels of the autograph nodes can be used for positioning of fletcher elements. The flexigrid layout of the fletcher elements is not influenced by the autograph elements since they use absolute coordinates.
+/// 
+/// All named arguments other than `graph-options` are passed on to `fletcher.diagram`. In particular, `node-*` and `edge-*` arguments set the @styling[default style] of the nodes and edges.
+///
+/// ```example
+/// #diagram(
+///   node-shape: "rect",
+///   graph-options: (rankdir: ltr),
+///   node(<a>), node(<b>), node(<c>),
+///   edge(<a>, <b>),
+///   edge(<a>, <c>),
+/// )
+/// ```
+///
+/// - axes (array): The directions of the coordinate axes, as in `fletcher.diagram`. Note that this only influences how fletcher interprets coordinates, not how the graph is laid out (see @rankdir).
+/// - graph-options (auto, dictionary): Options for the graph. This is a dictionary that may contain the following entries (see @graph-options for details):
+///   - `engine` (str): The Graphviz layout engine. One of `"circo"`, `"dot"`, `"fdp"`, `"neato"`, `"osage"`, `"sfdp"`, and `"twopi"`. Default: `"dot"`.
+///   - `rankdir` (direction): The direction in which the graph is laid out. One of `ttb`, `btt`, `ltr`, and `rtl`. Default: `ttb`.
+///   - Any `node-*` or `edge-*` style argument. These only apply to autograph nodes and edges and take precedence over the diagram arguments.
+/// - ..args (arguments): The elements of the diagram, followed by named arguments that are passed on to `fletcher.diagram`.
 #let diagram(
     axes: (ltr, ttb),
     graph-options: auto,
