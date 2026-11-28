@@ -80,7 +80,8 @@ See the [manual](https://github.com/felsenhower/typst-autograph/blob/v0.1.3/docs
 ### Upcoming
 
 - Decouple graph styles from diagram styles: You can now pass something like `graph-options: (node-shape: "rect")` and it will only apply to autograph nodes.
-- Add a manual
+- Add `rankdir` argument to `graph-options`.
+- Add a manual.
 
 ### 0.1.3
 
