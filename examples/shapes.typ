@@ -5,7 +5,7 @@
     fill: white,
 )
 
-#import "@local/autograph:0.1.3": diagram, node, edge
+#import "@local/autograph:0.2.0": diagram, node, edge
 #diagram(
     node(<circle>, [Circle], shape: "circle", fill: red.lighten(80%), stroke: red),
     node(<rect>, [Rect], shape: "rect", fill: green.lighten(80%), stroke: green),

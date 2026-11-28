@@ -4,14 +4,14 @@ A [Typst](https://typst.app/) package for drawing graphs with automatic layout, 
 
 ## Documentation
 
-See the [manual](https://github.com/felsenhower/typst-autograph/blob/v0.1.3/docs/manual.pdf) for a guide on styling and mixing with fletcher, and a reference of all functions.
+See the [manual](https://github.com/felsenhower/typst-autograph/blob/v0.2.0/docs/manual.pdf) for a guide on styling and mixing with fletcher, and a reference of all functions.
 
 ## Usage Examples
 
 ![A Simple Example](examples/simple.svg)
 
 ```typ
-#import "@preview/autograph:0.1.3": diagram, node, edge
+#import "@preview/autograph:0.2.0": diagram, node, edge
 #diagram(
   node(<foo>),
   node(<bar>),
@@ -77,7 +77,7 @@ See the [manual](https://github.com/felsenhower/typst-autograph/blob/v0.1.3/docs
 
 ## Changelog
 
-### Upcoming
+### 0.2.0
 
 - Decouple graph styles from diagram styles: You can now pass something like `graph-options: (node-shape: "rect")` and it will only apply to autograph nodes.
 - Add `rankdir` argument to `graph-options`.

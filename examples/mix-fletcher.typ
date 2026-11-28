@@ -5,7 +5,7 @@
     fill: white,
 )
 
-#import "@local/autograph:0.1.3" as autograph: diagram, fletcher
+#import "@local/autograph:0.2.0" as autograph: diagram, fletcher
 #diagram(
     graph-options: (engine: "circo",),
     node-fill: white,
