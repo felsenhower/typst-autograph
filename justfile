@@ -5,9 +5,9 @@ VERSION := `grep -oP '(?<=version = ")[^"]+' typst.toml`
 # Bump version to NEW_VERSION
 bump-version NEW_VERSION:
     @echo Bumping from version {{VERSION}} to {{NEW_VERSION}}
-    sed -i "$(printf 's/version = "%s"/version = "%s"/g' "{{VERSION}}" "{{NEW_VERSION}}")" typst.toml
-    sed -i "$(printf 's/autograph:%s/autograph:%s/g' "{{VERSION}}" "{{NEW_VERSION}}")" README.md
-    find examples -iname '*.typ' -exec sed -i "$(printf 's/autograph:%s/autograph:%s/g' "{{VERSION}}" "{{NEW_VERSION}}")" "{}" \;
+    sed -i "$(/usr/bin/printf 's/version = "%s"/version = "%s"/g' "{{VERSION}}" "{{NEW_VERSION}}")" typst.toml
+    sed -i "$(/usr/bin/printf 's/autograph:%1$s/autograph:%2$s/g; s+/blob/v%1$s/+/blob/v%2$s/+g; s+### Upcoming+### %2$s+g' "{{VERSION}}" "{{NEW_VERSION}}")" README.md
+    find examples -iname '*.typ' -exec sed -i "$(/usr/bin/printf 's/autograph:%s/autograph:%s/g' "{{VERSION}}" "{{NEW_VERSION}}")" "{}" \;
 
 install-local: package
     mkdir -p ~/.local/share/typst/packages/local/autograph/
