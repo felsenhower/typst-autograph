@@ -225,12 +225,11 @@
 
 #v(2cm, weak: true)
 
-#columns(2)[
-  #show heading: it => align(center, box(width: 100%, it)) + v(.8em)
+#[
   #outline(
     title: [Manual],
     target: selector(heading).after(<manual>, inclusive: false).before(<func-ref>, inclusive: false),
-    depth: 2,
+    depth: 3,
   )
 
   #outline(
@@ -543,6 +542,8 @@ Fletcher elements can refer to autograph nodes by their names, so we can use `en
   },
 )
 ```
+
+#pagebreak()
 
 == How it works
 
