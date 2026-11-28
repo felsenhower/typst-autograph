@@ -55,3 +55,21 @@ lint:
 
 check: test lint package-check
     @echo All done!
+
+# Package into typst-packages directory
+# Steps to update package:
+#   $ git clone --depth 1 --no-checkout --filter="tree:0" git@github.com:felsenhower/typst-packages
+#   $ cd typst-packages
+#   $ git sparse-checkout init
+#   $ git sparse-checkout set packages/preview/autograph
+#   $ git remote add upstream git@github.com:typst/packages
+#   $ git config remote.upstream.partialclonefilter tree:0
+#   $ git checkout main
+#   $ just copy-package /path/to/typst-packages
+# Finally, create a PR at https://github.com/typst/packages
+copy-package TYPST_PACKAGES_REPO_ROOT: package-check
+    [ -d "{{TYPST_PACKAGES_REPO_ROOT}}" ]
+    [ -d "{{TYPST_PACKAGES_REPO_ROOT}}/packages/preview/autograph" ]
+    @echo Packaging to "{{TYPST_PACKAGES_REPO_ROOT}}/packages/preview/autograph/{{VERSION}}"
+    [ -d "{{TYPST_PACKAGES_REPO_ROOT}}/packages/preview/autograph/{{VERSION}}" ] && rm -r "{{TYPST_PACKAGES_REPO_ROOT}}/packages/preview/autograph/{{VERSION}}" || true
+    cp -r autograph "{{TYPST_PACKAGES_REPO_ROOT}}/packages/preview/autograph/{{VERSION}}"
